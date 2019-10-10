@@ -5,7 +5,6 @@ Created on Thu Sep 12 21:31:42 2019
 
 @author: aldo_mellado
 """
-
 import pandas as pd
 import numpy as np
 
@@ -107,38 +106,64 @@ else: #en cambio, si no hubieron OT para ninguna unidad, entonces:
 #                           Tercer Indicador
 # OT T1 Cerradas
 #=============================================================================
-nom_tec = ['CARLOS LOBOS','CRISTIAN REBOLLEDO',
+nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
            'GUIDO VICENCIO','IGNACIO VALDIVIA',
            'PABLO SILVA']
 
 # (suma de todas las ordenes T1 generadas en el mes - sum ordenes T1 abiertas en el mes)/suma de todas las ordenes T1 generadas en el mes
-
 import pandas as pd
 import numpy as np
 
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
-df1 = pd.DataFrame(df.iloc[:,14]) # Fecha Asignación
 
-faas= np.unique(list(df1.iloc[1:,0]))
-df1 = df1[df1['Fecha de asiganación'].notnull()] #filtra nan o NaN
+# =============================================================================
+# Agregando, filtrando y casteando datos Fecha Inicio
+# =============================================================================
+df0 = pd.DataFrame(df.iloc[:,20]) # Fecha Inicio
+df0 = pd.DataFrame([str(j) for i,j in enumerate(df0['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio']) #Fecha convertida a str para luego buscar fecha
 
-df2 = pd.DataFrame(df.iloc[:,15]) #fecha recepción OT
-df3 = pd.DataFrame(df.iloc[:,12])
+df1 = pd.DataFrame(df.iloc[:,52]) # Fecha Termino6
+df1 = pd.DataFrame([str(j) for i,j in enumerate(df1['Fecha Termino6'])],dtype=object, columns = ['Fecha Termino6']) #Fecha convertida a str para luego buscar fecha
 
-df = df1.join(df2, how ='right')
-df3 = df2.join(df2,how = 'left')
 
-# Se buscan el índice de los elementos en la columna 'Estado UEM' que satisfacen la condicion de decir 'TRABAJO TERMINADO'
-#for i in ['T1','T2','T3','T4']:
-#    indexNames = [['Tipo de mantención'] == i].index
+df2 = pd.DataFrame(df.iloc[:,15]) # Nombre de técnico
+df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 
-indexNames = [['Tipo de mantención'] == 'T1'].index
+df1 = df0.join(df1, how ='left') # Se procede a juntar las columnas de Fecha de Inicio con Fecha Termino6
+df2 = df1.join(df2,how = 'right')  # Se procede a juntar las columnas de Fechas con Nom. Tec
+df3 = df2.join(df3,how = 'right')  # Se procede a juntar las columnas de Fecha y Nom.Tec con Tipo de Mant.
 
-# eliminar valores en índices que cumplieron la condicion en línea 28
-df.drop(indexNames , inplace=True)
+# =============================================================================
+# while i!=0 and j!=0:
+#     try:
+#         indexNames = df3[df3['Fecha Inicio'] == "00-00-0000"].index
+#         indexNames1 = df3[df3['Fecha Termino6'] == "00-00-0000"].index
+#     
+#     #eliminar valores en índices que cumplieron la condicion 
+#     
+#     df3.drop(indexNames , inplace=True)
+#     df3.drop(indexNames1, inplace=True) 
+#     
+#     i = np.shape(df3[df3['Fecha Inicio'] == "00-00-0000"].index)
+#     j = np.shape(df3[df3['Fecha Termino6'] == "00-00-0000"].index)
+# =============================================================================
 
+indexNames = df3[df3['Fecha Inicio'] =='00-00-0000'].index
+indexNames1 = df3[df3['Fecha Termino6'] == "00-00-0000"].index
+
+index = [str(i) for i in indexNames]
+index1 = [str(i) for i in indexNames1]
 
 mes = input('\nIngrese Mes a buscar: ')
 año = input('\nIngrese Año a buscar: ')
 
 fecha  = año +"-" +mes
+
+mant_mes_ab  = df3[df3['Fecha de Inicio' ].str.contains(fecha)]
+mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
+num_man = np.shape(mant_mes_cr)[0]# Numero de OT tipo T2 generadas durante el mes y año indicados.
+
+# Crear un diccionario, que almacene la cantidad de atenciones por técnico en mes dado
+atenciones = { }
+
+man_tec_mes = mantenciones_mes.loc[mantenciones_mes['Tipo de mantención'] == 'T2'] #mantenciones de tipo T2 hechas por nom.tec ese mes y año  
