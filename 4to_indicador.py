@@ -155,8 +155,9 @@ print(f"\nLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)
 # =============================================================================
 #                           Cuarto Indicador 
 # =============================================================================
-import pandas as pd 
+import pandas as pd
 import numpy as np
+import pygal
 
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
 nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
@@ -192,6 +193,18 @@ mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
 mant_T2 = mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1']
 mant_T2 = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
 
+# Numero de OT T1 Abiertas en la fecha ingresada
+mant_T1_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T1'])[0]
+
+# Numero de OT T2 Abiertas en la fecha ingresada
+mant_T2_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T2'])[0]
+
+
+# Numero de OT T1 Cerradas en la fecha ingresada
+mant_T1_cr = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
+# Numero de OT T2 Cerradas en la fecha ingresada
+mant_T2_cr = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T2'])[0]
+
 T = ["T1", "T2"]
 aux = {}
 
@@ -201,6 +214,11 @@ for s,t in enumerate(nom_tec):
     aux[s] = {t:mant_T2}
     
 resultados = [aux[i] for i,j in enumerate(aux.items())]
-for i in resultados:
-    print(i)
-    
+
+percent_formatter = lambda x: '{:.10g}%'.format(x)
+
+pie_chart = pygal.Pie(print_values = True)
+pie_chart .title = "% de OT T1 pendientes".format(fecha)
+for x,y in enumerate(nom_tec):
+    pie_chart .add(y,resultados[x][y][0]['T1'], formatter = percent_formatter)
+pie_chart.render_in_browser()
