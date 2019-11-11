@@ -26,44 +26,23 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 # =============================================================================
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 
-flag = True
+mes = input('\nIngrese Mes a buscar: ')
+año = input('\nIngrese Año a buscar: ')
 
-while flag:
-    mes = input('\nIngrese Mes a buscar: ')
-    año = input('\nIngrese Año a buscar: ')
-    if len(mes)==0 or len(año)==0:
-        print("\nFavor ingrese un año y un mes válidos\n")
-    else:
-        flag = False
-        
 fecha  = año +"-" +mes
 
-mant_mes_gen  = df0[df0['Fecha Inicio'].str.contains(fecha)]
-mant_mes_ab = mant_mes_gen
-
-# Se buscan el índice de los elementos en la columna 'Fecha Termino6' que satisfacen la condicion de coincidir con la fecha ingresada
-indexNames = df4[df4['Fecha Termino6'].str.contains(fecha)].head().index
-
-# eliminar valores en índices que cumplieron la condicion en línea 28
-mant_mes_ab.drop(indexNames , inplace=True)
-
-
-mant_T2 = mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1']
-mant_T2 = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
-
-# Numero de OT T1 Generadas en la fecha ingresada
-mant_T1_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T1'])[0]
+mant_mes_ab  = df4[df4['Fecha Inicio' ].str.contains(fecha)]
+mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
+mant_T2 = mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T2']
+mant_T2 = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T2'])[0]
 
 # Numero de OT T2 Generadas en la fecha ingresada
 mant_T2_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T2'])[0]
 
-
-# Numero de OT T1 Cerradas en la fecha ingresada
-mant_T1_cr = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
 # Numero de OT T2 Cerradas en la fecha ingresada
 mant_T2_cr = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T2'])[0]
 
-T = ["T1", "T2"]
+T = ["T2"]
 aux = {}
 
 for s,t in enumerate(nom_tec):
@@ -76,8 +55,13 @@ resultados = [aux[i] for i,j in enumerate(aux.items())]
 percent_formatter = lambda x: '{:.2g}%'.format(x)
 
 pie_chart = pygal.Pie(print_values = True)
-pie_chart .title = "% de OT T1 cerradas v/s total mes".format(fecha)
+pie_chart .title = "% de OT T2 cerradas v/s total mes".format(fecha)
 
-for x,y in enumerate(nom_tec):
-    pie_chart .add(y,(resultados[x][y][0]['T1'])/mant_T1_ab * 100, formatter = percent_formatter)
-pie_chart.render_in_browser()
+flag =  any(mant_T2_ab.iloc[:,1])# verifica que la cantidad de OT para las unidades no sea 0
+
+if flag==True: #Si la cantidad de OT para las unidades no es 0, entonces:
+    for x,y in enumerate(nom_tec):
+        pie_chart .add(y,((mant_T2_ab - resultados[x][y][0]['T2'])/mant_T2_ab) * 100, formatter = percent_formatter)
+        pie_chart.render_in_browser()
+else: #en cambio, si no hubieron OT para ninguna unidad, entonces:
+    print("\nEn esta fecha no existen OT de tipo T2 cerradas")

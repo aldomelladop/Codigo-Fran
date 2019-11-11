@@ -14,10 +14,15 @@ df2 = pd.DataFrame(df.iloc[:,20])
 df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio'])
 df3 = df1.join(df2)
 
-
-mes = input('\nIngrese Mes a buscar: ')
-año = input('\nIngrese Año a buscar: ')
-
+flag = True
+while flag:
+    mes = input('\nIngrese Mes a buscar: ')
+    año = input('\nIngrese Año a buscar: ')
+    if len(mes)==0 or len(año)==0:
+        print("\nFavor ingrese un año y un mes válidos\n")
+    else:
+        flag = False
+        
 fecha  = año +"-" +mes
 
 df_total_mes  = df3[df3['Fecha Inicio'].str.contains(fecha)]
@@ -63,9 +68,14 @@ df2 = pd.DataFrame(df.iloc[:,9]) #fecha recepción OT
 df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha recepcion OT'])],dtype=object, columns = ['Fecha recepcion OT']) #Fecha convertida a str para luego buscar fecha
 df3 = df1.join(df2) #Unir ambos dataFrame para relacionarlos
 
-
-mes = input('\nIngrese Mes a buscar: ')
-año = input('\nIngrese Año a buscar: ')
+flag = True
+while flag:
+    mes = input('\nIngrese Mes a buscar: ')
+    año = input('\nIngrese Año a buscar: ')
+    if len(mes)==0 or len(año)==0:
+        print("\nFavor ingrese un año y un mes válidos\n")
+    else:
+        flag =False
 
 fecha  = año +"-" +mes
 
@@ -136,9 +146,15 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 # =============================================================================
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 
-mes = input('\nIngrese Mes a buscar: ')
-año = input('\nIngrese Año a buscar: ')
-
+flag = True
+while flag:
+    mes = input('\nIngrese Mes a buscar: ')
+    año = input('\nIngrese Año a buscar: ')
+    if len(mes)==0 or len(año)==0:
+        print("\nFavor ingrese un año y un mes válidos\n")
+    else:
+        flag =False
+        
 fecha  = año +"-" +mes
 
 mant_mes_ab  = df4[df4['Fecha Inicio' ].str.contains(fecha)]

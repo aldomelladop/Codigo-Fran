@@ -195,7 +195,6 @@ mant_T2 = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
 
 # Numero de OT T1 Abiertas en la fecha ingresada
 mant_T1_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T1'])[0]
-
 # Numero de OT T2 Abiertas en la fecha ingresada
 mant_T2_ab = np.shape(mant_mes_ab[mant_mes_ab['Tipo de mantención'] == 'T2'])[0]
 
@@ -218,7 +217,7 @@ resultados = [aux[i] for i,j in enumerate(aux.items())]
 percent_formatter = lambda x: '{:.10g}%'.format(x)
 
 pie_chart = pygal.Pie(print_values = True)
-pie_chart .title = "% de OT T1 pendientes".format(fecha)
+pie_chart .title = "% de OT T1 Cerradas".format(fecha)
 for x,y in enumerate(nom_tec):
     pie_chart .add(y,resultados[x][y][0]['T1'], formatter = percent_formatter)
 pie_chart.render_in_browser()
