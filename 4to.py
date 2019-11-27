@@ -60,14 +60,27 @@ mant_mes  = df4[df4['Fecha Inicio'].str.contains(fecha)]
 # Órdenes de tipo T1 generadas en la fecha
 
 mant_T1 = mant_mes[mant_mes['Tipo de mantención'] == 'T1']
+mant_T1 = mant_T1[mant_T1['Nombre Técnico'].isin(nom_tec)]
+
 mant_T2 = mant_mes[mant_mes['Tipo de mantención'] == 'T2']
+mant_T2 = mant_T2[mant_T2['Nombre Técnico'].isin(nom_tec)] #elimina todos las filas que contenian informacion sobre atención realizadas por personas que no eran técnicos
+
 #mant_T3 = mant_mes[mant_mes['Tipo de mantención'] == 'T3']
 #mant_T4 = mant_mes[mant_mes['Tipo de mantención'] == 'T4']
 
 #Órdenes cerradas de tipo T1 y T2 en esa fecha
-mant_cer_mes = mant_mes[mant_mes['Fecha Termino6'].str.contains(fecha)]
-mant_cer_T1 = mant_T1[mant_T1['Fecha Termino6'].str.contains(fecha)]
-mant_cer_T2 = mant_T2[mant_T2['Fecha Termino6'].str.contains(fecha)]
+mant_cer_mes = df4[df4['Fecha Termino6'].str.contains(fecha)]
+mant_cer_mes = mant_cer_mes[mant_cer_mes['Nombre Técnico'].isin(nom_tec)]
+
+mant_cer_T1 = df4[df4['Fecha Termino6'].str.contains(fecha)]
+mant_cer_T1 = mant_cer_T1[mant_cer_T1['Nombre Técnico'].isin(nom_tec)]
+mant_cer_T1 = mant_cer_T1[mant_cer_T1['Tipo de mantención']=='T1']
+
+mant_cer_T2 = df4[df4['Fecha Termino6'].str.contains(fecha)]
+mant_cer_T2 = mant_cer_T2[mant_cer_T2['Nombre Técnico'].isin(nom_tec)]
+mant_cer_T2 = mant_cer_T2[mant_cer_T2['Tipo de mantención']=='T2']
+
+
 #mant_cer_T3 = mant_T3[mant_T3['Fecha Termino6'].str.contains(fecha)]
 #mant_cer_T4 = mant_T4[mant_T4['Fecha Termino6'].str.contains(fecha)]
 
@@ -85,27 +98,25 @@ resultados = [aux[i] for i,j in enumerate(aux.items())]
 percent_formatter = lambda x: '{:.2g}%'.format(x)
 
 pie_chart = pygal.Pie(print_values = True)
-pie_chart .title = "% de OT T1 cerradas v/s total mes".format(fecha)
+pie_chart.title = "% de OT T1 cerradas v/s total mes\n{}".format(fecha)
 
-try:
+if np.shape(mant_T1)[0]!=0:
     for x,y in enumerate(nom_tec):
+        print(x,y,resultados[x][y][0]['T1'])
         #todas las generadas - las abiertas (generadas - cerradas)
-        pie_chart .add(y,(resultados[x][y][0]['T1'])/np.shape(mant_T1)[0] * 100, formatter = percent_formatter)
-except:
-    print("\nEn esta fecha no existen OT de tipo T1")
-finally:
+        pie_chart.add(y,(resultados[x][y][0]['T1'])/np.shape(mant_T1)[0] * 100, formatter = percent_formatter)
     pie_chart.render_in_browser()
+else:
+    print("\nEn esta fecha no existen OT de tipo T1")
 
 pie_chart = pygal.Pie(print_values = True)
-pie_chart .title = "% de OT T2 cerradas v/s total mes".format(fecha)
+pie_chart .title = "% de OT T2 cerradas v/s total mes\n{}".format(fecha)
 
-try:
+if np.shape(mant_T2)[0]!=0:
     for x,y in enumerate(nom_tec):
+        print(x,y,resultados[x][y][1]['T2'])
         #todas las generadas - las abiertas (generadas - cerradas)
         pie_chart .add(y,(resultados[x][y][1]['T2'])/np.shape(mant_T2)[0] * 100, formatter = percent_formatter)
-except:
-    print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")
-finally:
     pie_chart.render_in_browser()
-
-
+else:
+    print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")

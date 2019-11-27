@@ -26,9 +26,23 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 # =============================================================================
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 
-mes = input('\nIngrese Mes a buscar: ')
-año = input('\nIngrese Año a buscar: ')
+flag = True
+#flag_mes = 0
+#flag_año = 0
 
+while flag:
+    mes = input('\nIngrese Mes a buscar: ')
+    año = input('\nIngrese Año a buscar: ')
+    
+#    flag_mes = int(mes) #copia de los valores de mes y año ingresados que no modifican originales
+#    flag_año = int(año) #se hace un casteo para corroborar formato
+    
+#    if len(mes)==0 or len(año)==0 or flag_mes not in range(1,13): #se hace el filtro para la condición que no cumple
+    if len(mes)==0 or len(año)==0:
+        print("\nFavor ingrese un año y un mes válidos\n")
+    else:
+        flag = False
+        
 fecha  = año +"-" +mes
 
 mant_mes_ab  = df4[df4['Fecha Inicio' ].str.contains(fecha)]
