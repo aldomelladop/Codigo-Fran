@@ -298,3 +298,95 @@ if np.shape(mant_T2)[0]!=0:
     pie_chart.render_in_browser()
 else:
     print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")
+    
+# =============================================================================
+#                           Sexto Indicador
+# =============================================================================
+import pandas as pd
+import numpy as np
+
+nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
+           'GUIDO VICENCIO','IGNACIO VALDIVIA',
+           'PABLO SILVA']
+
+df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
+df = df[df['Estado UEM'].isin(['TRABAJO TERMINADO'])]
+#df= df[df['Estado UEM'].map(lambda x: str(x)=="TRABAJO TERMINADO")]
+
+#df.iloc[:,X] --> x =4, Equipo; x=12, HH; x=15, Nom_Tec; x=12, T_Mant;
+df4 = pd.concat([df.iloc[:,4],df.iloc[:,12],df.iloc[:,15],df.iloc[:,32]], axis = 1, sort = False).dropna()
+
+equipos = ['MONITOR', 'ANESTESIA', 'DESFIBRILADOR', 'VENTILADOR', 'INCUBADORA', 'ELECTROBIST']
+df4['Equipo'] = df4['Equipo'].str.upper()
+
+#Filtrar, del listado de equipos, aquellos que no pertenecen al listado de interés
+df4 =  df4[~df4['Equipo'].isin(["SISTEMA DE MONITOREO MULTIPARAMETRO", 
+           "AGITADOR DE PLAQUETAS (INCUBADORA Y AGITADOR)"])]
+
+aux = pd.DataFrame([])
+
+for i in equipos:
+        aux = aux.append(df4[df4['Equipo'].str.contains(i)], ignore_index = True)
+
+#Ante la posibilidad que la búsqueda de elementos coincida por alcance con otros, borramos estas alternativas.
+aux = aux[~aux['Equipo'].isin(['MONITOR DESFIBRILADOR','MONITOR DESFIBRILADOR CON ECG'])]
+
+#Filtramos técnicos que no figuran en la nómina de interés
+aux = aux[aux['Nombre Técnico'].isin(nom_tec)]
+
+#Filtramos las órdenes que no son del tipo de interés
+aux = aux[aux['Tipo de mantención'].isin(['T1','T2'])]
+
+equipo =  list(aux['Equipo'].unique())
+
+tipo = ['T1','T2']
+l = 0
+tiempos =  {'T1':{'MONITOR':4, 'ANESTESIA':5,'DESFIBRILADOR':5, 'VENTILADOR':5,'INCUBADORA':3,'ELECTROBIST':4},'T2':{'MONITOR':5, 'ANESTESIA':6,'DESFIBRILADOR':6, 'VENTILADOR':6,'INCUBADORA':4,'ELECTROBIST':-1}}
+
+while(l<np.shape(tipo)[0]):
+    globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
+    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
+    
+    for i in nom_tec:
+        globals()['ord_{}'.format(i)] = aux[aux['Nombre Técnico']==i]
+        globals()['ord_{}'.format(i)] = globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Tipo de mantención']==tipo[l]]
+    
+        for j in equipo:
+            aux1=  globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Equipo']==j]
+            promedio = aux1['Horas Hombres'].mean()
+
+            aux2 = pd.DataFrame([[j,tipo[l],i,round(promedio,1)]],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])    
+            globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = globals()['prom_hh_eq_tec_{}'.format(tipo[l])].append(aux2).dropna() #NaN borrados. Usado para calcular apropiadamente el promedio de hh
+
+
+    for x in equipos:
+        for i in nom_tec:
+            aux1 = globals()['prom_hh_eq_tec_{}'.format(tipo[l])][globals()['prom_hh_eq_tec_{}'.format(tipo[l])]['Equipo'].str.contains(x)]
+            aux1 = aux1[aux1['Nombre Técnico']==i]
+            
+            if np.shape(aux1)[0]!=0:                
+                aux4 = pd.DataFrame(np.array([[x,tipo[l], i, round(aux1['Horas Hombres'].mean(),2)]]),columns =['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres Prom'])
+                globals()['tabla_{}'.format(tipo[l])] = globals()['tabla_{}'.format(tipo[l])].append(aux4).dropna()
+            else:
+                pass
+
+
+    for j in equipos:
+        for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
+            if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
+                # globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = str(round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)*100) +'%'
+                globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)
+    l+=1
+    
+# =============================================================================
+# Grafico  
+# =============================================================================
+
+line_chart = pygal.Bar()
+line_chart.title = 'Browser usage evolution (in %)'
+line_chart.x_labels = map(str, range(2002, 2013))
+line_chart.add('Firefox', [None, None, 0, 16.6,   25,   31, 36.4, 45.5, 46.3, 42.8, 37.1])
+line_chart.add('Chrome',  [None, None, None, None, None, None,    0,  3.9, 10.8, 23.8, 35.3])
+line_chart.add('IE',      [85.8, 84.6, 84.7, 74.5,   66, 58.6, 54.7, 44.8, 36.2, 26.6, 20.1])
+line_chart.add('Others',  [14.2, 15.4, 15.3,  8.9,    9, 10.4,  8.9,  5.8,  6.7,  6.8,  7.5])
+line_chart.render_in_browser()
