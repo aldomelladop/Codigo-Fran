@@ -304,6 +304,7 @@ else:
 # =============================================================================
 import pandas as pd
 import numpy as np
+import pygal
 
 nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
            'GUIDO VICENCIO','IGNACIO VALDIVIA',
@@ -381,7 +382,7 @@ while(l<np.shape(tipo)[0]):
     # Grafico  
     # =============================================================================
     
-    l=0            
+               
     line_chart = pygal.Bar(x_label_rotation=20)
     line_chart.title = 'Eficiencia técnicos atenciones de tipo ' + tipo[l]
     line_chart.x_labels = map(str, nom_tec)
@@ -391,7 +392,13 @@ while(l<np.shape(tipo)[0]):
     line_chart.render_to_file('line_chart_'+tipo[l]+'.svg')
     line_chart.render_in_browser()
     l+=1
-
+# =============================================================================
+#   Octavo Indicador
+# =============================================================================
+    # Evaluar la productividad y cumplimiento de la unidad relacionando con el
+    # N° de OT cerradas y  OT acumuladas los ultimos 6 meses    
+    
+    
 # =============================================================================
 # Subir codigo
 # =============================================================================
