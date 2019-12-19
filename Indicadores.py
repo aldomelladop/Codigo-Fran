@@ -380,10 +380,12 @@ while(l<np.shape(tipo)[0]):
     # =============================================================================
     # Grafico  
     # =============================================================================
-                
-    line_chart = pygal.Bar()
+    
+    l=0            
+    line_chart = pygal.Bar(x_label_rotation=20)
     line_chart.title = 'Eficiencia técnicos atenciones de tipo ' + tipo[l]
     line_chart.x_labels = map(str, nom_tec)
+    line_chart.x_labels_major = ['This is the first point !', 'This is the fourth point !']
     
     line_chart.add('Hola', [None, None, 0, 16.6,   25,   31, 36.4, 45.5, 46.3, 42.8, 37.1])
     line_chart.render_to_file('line_chart_'+tipo[l]+'.svg')
