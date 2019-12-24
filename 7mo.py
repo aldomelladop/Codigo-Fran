@@ -37,28 +37,39 @@ fechas = [fecha - timedelta(365*i/12) for i in range(1,7)]
 df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
 
 for i in fechas:
-    df_total_mes = df_total_mes.append(df3[df3['Fecha Inicio'].str.contains(str(i.year) + "-" + str(i.month))], ignore_index = True)
+    if len(str(i.month))==1:
+        aux = str(i.year) + "-0" + str(i.month)
+    else:
+        aux = str(i.year) + "-" + str(i.month)
+        
+    j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
+    
+    if j[0]!=0:
+        k = df3[df3['Fecha Inicio'].str.contains(aux)].iloc[1,:]
 
+    df_total_mes = pd.concat([df_total_mes, df3[df3['Fecha Inicio'].str.contains(aux)]])
+    
+# Se buscan el índice de los elementos en la columna 'Estado UEM' que satisfacen la condicion de decir 'TRABAJO TERMINADO'
+ord_pend = df_total_mes[~df_total_mes['Estado UEM'].isin(['TRABAJO TERMINADO'])]
 
+num_pendientes = np.shape(ord_pend)[0]
 num_trab = np.shape(df_total_mes)[0]
 
-# Se buscan el índice de los elementos en la columna 'Estado UEM' que satisfacen la condicion de decir 'TRABAJO TERMINADO'
-indexNames = df_total_mes[ df_total_mes['Estado UEM'] == 'TRABAJO TERMINADO'].index
-
-# eliminar valores en índices que cumplieron la condicion en línea 28
-df_total_mes.drop(indexNames , inplace=True)
-
-# contar la cantidad de filas que tienen por estado 'Pendiente'
-num_pendientes = np.shape(df_total_mes)[0]
-
 #calculo porcentaje
-porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+porcentaje = round((num_pendientes/num_trab) * 100,1)
 
 import pygal
 
-b_chart = pygal.SolidGauge(inner_radius=0.45)
-b_chart.title = "Trabajos abiertos v/s Trabajos Cerrados en\n{}".format(fecha)
-b_chart.add("Trabajos Completados", porcentaje)
-#b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
-#b_chart.add("Total Trabajos", num_trab)
-b_chart.render_in_browser()
+pie_chart = pygal.Pie()
+pie_chart.title = "Trabajos pendientes v/s Trabajos Cerrados en los 6 meses previos a {}".format(str(fecha.year)+'-'+
+                                                                                                 str(fecha.month))
+pie_chart.add("Trabajos Pendientes", porcentaje)
+pie_chart.add('Trabajo Terminado', 100-porcentaje)
+pie_chart.render_in_browser()
+
+# =============================================================================
+# Subir codigo
+# =============================================================================
+!git add .
+!git commit -m "mensaje"
+!git push
