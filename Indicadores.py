@@ -47,7 +47,7 @@ porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
 import pygal
 
 b_chart = pygal.SolidGauge(inner_radius=0.45)
-b_chart.title = "Trabajos abiertos v/s Trabajos Cerrados en\n{}".format(fecha)
+b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
 b_chart.add("Trabajos Completados", porcentaje)
 #b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
 #b_chart.add("Total Trabajos", num_trab)
@@ -109,12 +109,14 @@ flag =  any(ocurr.iloc[:,1])# verifica que la cantidad de OT para las unidades n
 import pygal
 b_chart = pygal.SolidGauge(inner_radius=0.75)
 b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
-if flag==True: #Si la cantidad de OT para las unidades no es 0, entonces:0
-    for i in range(num_to_filter):
+
+for i in range(num_to_filter):
+    if ocurr.iloc[i,1] !=0:
         b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
+    else:
+        print("\nEn esta fecha no existen OT")
     b_chart.render_in_browser()
-else: #en cambio, si no hubieron OT para ninguna unidad, entonces:
-    print("\nEn esta fecha no existen OT")
+    
 #=============================================================================
 #                           Tercer Indicador (Contador)
 # OT abiertas
@@ -168,9 +170,25 @@ mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
 
 print(f"\nLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)[0]}")
 
-#mant_T2 = mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1']
-#mant_T2 = np.shape(mant_mes_cr[mant_mes_cr['Tipo de mantención'] == 'T1'])[0]
+import pygal
+hist = pygal.Histogram(print_values=True)
+# hist.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0],0,8])
 
+hist.add('N° Órdenes Abiertas',[(np.shape(mant_mes_ab)[0],0,5)])
+# hist.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0],5,10])
+hist.render_in_browser()
+
+
+from pygal.style import DefaultStyle
+chart = pygal.Bar(dynamic_print_values=True,print_values_position='bottom',
+                  style=DefaultStyle(
+                  value_font_family='googlefont:Raleway',
+                  value_font_size=30,
+                  value_colors=('black',)))
+chart.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0]])
+chart.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0]])
+chart.render_in_browser()
+    
 
 # =============================================================================
 # # Cuarto y Quinto Indicador (Porcentaje de Atenciones cerradas netas de tipo 
