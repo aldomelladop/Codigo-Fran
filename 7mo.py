@@ -130,7 +130,6 @@ filtro_serie = df4[df4['Serie'].str.contains(serie)]
 # diferencia entre fechas 
 # Representa la cantidad de meses y años que hay de diferencia entre la f1 y la f2
 
-
 dbd = (f2 -f1).days/30
 fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
 fechas = [str(j.year) +'-'+str(j.month) for i,j in enumerate(fechas)]
@@ -138,12 +137,12 @@ fechas = [str(j.year) +'-'+str(j.month) for i,j in enumerate(fechas)]
 aux = pd.DataFrame([])
 
 for i in fechas:
-    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = True)
-    if filtro_serie['Fecha recepcion OT'].str.contains(i) == True:
+    # aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = False)
+    
+    if filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)] == True:
         print(np.shape(aux))
     else:
         print('Pato')
-
 
 # =============================================================================
 # Subir codigo
