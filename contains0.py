@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Dec 31 19:49:29 2019
+
+@author: aldo_mellado
+"""
+
+def contains0(n1):
+    if int(n1) <9 and '0' not in n1:
+         aux  = '0' + n1
+         return(str(aux))
+         
+    else:
+        aux = str(n1)
+        return(aux)
+
+# m1 = contains0(13)
+    
