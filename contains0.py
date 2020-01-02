@@ -7,13 +7,14 @@ Created on Tue Dec 31 19:49:29 2019
 """
 
 def contains0(n1):
-    if int(n1) <9 and '0' not in n1:
-         aux  = '0' + n1
+    
+    if int(n1) <=9 and '0' not in str(n1):
+         aux  = '0' + str(n1)
          return(str(aux))
          
     else:
         aux = str(n1)
         return(aux)
 
-# m1 = contains0(13)
+m1 = contains0(9)
     
