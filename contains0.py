@@ -15,6 +15,3 @@ def contains0(n1):
     else:
         aux = str(n1)
         return(aux)
-
-m1 = contains0(9)
-    

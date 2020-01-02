@@ -132,14 +132,16 @@ filtro_serie = df4[df4['Serie'].str.contains(serie)]
 
 dbd = (f2 -f1).days/30
 fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
-# fechas = [str(j.year) +'-'+str(j.month) for i,j in enumerate(fechas)]
+fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
 
 aux = pd.DataFrame([])
 
 for i in fechas:
-    print(fechas)
-    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = Ture)
-    
+    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = True)
+
+contador = np.shape(aux)[0]
+print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
+
 # =============================================================================
 # Subir codigo
 # =============================================================================
