@@ -431,24 +431,26 @@ while flag:
     else:
         flag = False
         
-fecha  = datetime.strptime(año +"-" + contains0(mes) + '-28 13:10:19.93000', '%Y-%m-%d %H:%M:%S.%f')
+fecha  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
 fechas = [fecha - timedelta(365*i/12) for i in range(1,7)]
 
 #Si en lugar de solo guardar los trabajos ocurridos esa fecha, guardo también la de los 6 meses posteriores, podría entonces, 
 #Hacer un filtro solo con este comando
-    
+
 #Convertir todos los elementos en el dataframe para poder hacer uso del método str.contains() y compararlo con las fechas
 
 df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
 
 for i in fechas:
-    i = str(i.year) + "-0" + str(i.month)
-    j = np.shape(df3[df3['Fecha Inicio'].str.contains(i)])
+    if len(str(i.month))==1:
+        aux = str(i.year) + "-0" + str(i.month)
+    else:
+        aux = str(i.year) + "-" + str(i.month)
+        
+    j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
     
     if j[0]!=0:
         k = df3[df3['Fecha Inicio'].str.contains(aux)].iloc[1,:]
-    else:
-        pass
 
     df_total_mes = pd.concat([df_total_mes, df3[df3['Fecha Inicio'].str.contains(aux)]])
     
@@ -459,16 +461,18 @@ num_pendientes = np.shape(ord_pend)[0]
 num_trab = np.shape(df_total_mes)[0]
 
 #calculo porcentaje
-porcentaje = round((num_pendientes/num_trab) * 100,1)
+if num_trab!=0:
+    porcentaje = round((num_pendientes/num_trab) * 100,1)
+    import pygal
 
-import pygal
+    pie_chart = pygal.Pie()
+    pie_chart.title = "Trabajos pendientes v/s Trabajos Cerrados en los 6 meses previos a {}".format(str(fecha.year)+'-'+ str(fecha.month))
+    pie_chart.add("Trabajos Pendientes", porcentaje)
+    pie_chart.add('Trabajo Terminado', 100-porcentaje)
+    pie_chart.render_in_browser()
 
-pie_chart = pygal.Pie()
-pie_chart.title = "Trabajos pendientes v/s Trabajos Cerrados en los 6 meses previos a {}".format(str(fecha.year)+'-'+
-                                                                                                 str(fecha.month))
-pie_chart.add("Trabajos Pendientes", porcentaje)
-pie_chart.add('Trabajo Terminado', 100-porcentaje)
-pie_chart.render_in_browser()
+else:
+    print(f"num_trab  = {num_trab}")
 
 # =============================================================================
 # Noveno Indicador
@@ -544,18 +548,15 @@ for i in fechas:
 
 contador = np.shape(aux)[0]
 print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
-
-
 # =============================================================================
 # Contadores agrupables
 # =============================================================================
 
-# 1er, 2do
-
+# 1er, 2do,3ro
 
 # =============================================================================
 # Subir codigo
 # =============================================================================
 !git add .
-!git commit -m "mensaje"
+!git commit -m "Indicadores corregidos"
 !git push
