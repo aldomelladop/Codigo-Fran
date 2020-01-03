@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Sep 12 21:31:42 2019
-
 @author: aldo_mellado
 """
 
@@ -13,12 +12,16 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
-df1 = pd.DataFrame(df.iloc[:,1])
-df2 = pd.DataFrame(df.iloc[:,20])
+df1 = pd.DataFrame(df.iloc[:,1]) #Estado UEM
+
+df2 = pd.DataFrame(df.iloc[:,20]) #Fecha Inicio
+df2 = df2[df2['Fecha Inicio'] !='00-00-0000']
 df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio'])
-df3 = df1.join(df2)
+
+df3 = df1.join(df2).dropna() #fusiona ambos archivos; Estado UEM y Fecha Inicio, eliminando valores no validos (nan)
 
 flag = True
+#while usado para que solicite los datos hasta que estos sean válidos
 while flag:
     mes = input('\nIngrese Mes a buscar: ')
     año = input('\nIngrese Año a buscar: ')
@@ -27,7 +30,7 @@ while flag:
     else:
         flag = False
         
-fecha  = año +"-" +mes
+fecha  = año +"-" + contains0(mes) #contains0 corrige la posibiliadd que el usuario ingrese 1, en lugar de 01
 
 df_total_mes  = df3[df3['Fecha Inicio'].str.contains(fecha)]
 num_trab = np.shape(df_total_mes)[0]
@@ -44,14 +47,14 @@ num_pendientes = np.shape(df_total_mes)[0]
 #calculo porcentaje
 porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
 
-# import pygal
+import pygal
 
-# b_chart = pygal.SolidGauge(inner_radius=0.45)
-# b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
-# b_chart.add("Trabajos Completados", porcentaje)
-# #b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
-# #b_chart.add("Total Trabajos", num_trab)
-# b_chart.render_in_browser()
+b_chart = pygal.SolidGauge(inner_radius=0.45)
+b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
+b_chart.add("Trabajos Completados", porcentaje)
+#b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
+#b_chart.add("Total Trabajos", num_trab)
+b_chart.render_in_browser()
 
 # =============================================================================
 #                               Segundo Indicador (?)
@@ -63,13 +66,13 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
-df1 = pd.DataFrame(df.iloc[:,3]) #unidad
-
-df1 = df1[df1['Servicio o Unidad'].notnull()] #filtra nan o NaN
+df1 = pd.DataFrame(df.iloc[:,3]).dropna() #unidad
 
 df2 = pd.DataFrame(df.iloc[:,9]) #fecha recepción OT
+df2 = df2[df2['Fecha recepcion OT'] !='00-00-0000']
 df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha recepcion OT'])],dtype=object, columns = ['Fecha recepcion OT']) #Fecha convertida a str para luego buscar fecha
-df3 = df1.join(df2) #Unir ambos dataFrame para relacionarlos
+
+df3 = df1.join(df2).dropna() #Unir ambos dataFrame para relacionarlos
 
 flag = True
 while flag:
@@ -80,17 +83,16 @@ while flag:
     else:
         flag =False
 
-fecha  = año +"-" +mes
+fecha  = año +"-" + contains0(mes)
 
 unidades = np.unique(list(df1.iloc[1:,0])) #Me permite encontrar sin repeticion los nombres de los Servicios o Unidades disponibles
 
-#opcion = input("Para filtrar los datos, ingrese:\na) Si desea filtrar por mes\nSi desea filtrar por año\nc)Si desea filtrar por Unidad\nd)Si desea filtrar por unidad y año\ne)Si desea filtrar por unidad y mes")
+#opcion = input("Para filtrar los da2017-02'tos, ingrese:\na) Si desea filtrar por mes\nSi desea filtrar por año\nc)Si desea filtrar por Unidad\nd)Si desea filtrar por unidad y año\ne)Si desea filtrar por unidad y mes")
 
 # Filtro por fecha
-# Se ingresa el la fecha que se desea filtrar y aparecen las OT en esa fecha para
-# todas las unidades
+# Se ingresa el la fecha que se desea filtrar y aparecen las OT en esa fecha para todas las unidades
 
-ot_mes  = df3[df3['Fecha recepcion OT' ].str.contains(fecha)]
+ot_mes  = df3[df3['Fecha recepcion OT'].str.contains(fecha)]
 num_trab = np.shape(ot_mes)[0]# Numero de OT generadas durante el mes y año indicados
 
 # Crear un diccionario, que almacene la cantidad de ocurrencias u OT para esa unidad determinada
@@ -106,16 +108,17 @@ num_to_filter = 3 #Cantidad de valores a filtrar
 ocurr = pd.DataFrame(sorted(ocurrencias.items(), key = lambda x:x[1], reverse = True)).iloc[:num_to_filter,:]
 flag =  any(ocurr.iloc[:,1])# verifica que la cantidad de OT para las unidades no sea 0
 
-# import pygal
-# b_chart = pygal.SolidGauge(inner_radius=0.75)
-# b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
+import pygal
+b_chart = pygal.SolidGauge(inner_radius=0.75)
+b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
 
-# for i in range(num_to_filter):
-#     if ocurr.iloc[i,1] !=0:
-#         b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
-#     else:
-#         print("\nEn esta fecha no existen OT")
-#     b_chart.render_in_browser()
+for i in range(num_to_filter):
+    if ocurr.iloc[i,1] !=0:
+        b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
+    else:
+        print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
+
+b_chart.render_in_browser()
     
 #=============================================================================
 #                           Tercer Indicador (Contador)
@@ -160,7 +163,7 @@ while flag:
     else:
         flag =False
         
-fecha  = año +"-" +mes
+fecha  = año +"-" + contains0(mes)
 
 mant_mes_ab  = df4[df4['Fecha Inicio' ].str.contains(fecha)]
 
@@ -177,18 +180,6 @@ hist = pygal.Histogram(print_values=True)
 hist.add('N° Órdenes Abiertas',[(np.shape(mant_mes_ab)[0],0,5)])
 # hist.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0],5,10])
 hist.render_in_browser()
-
-
-from pygal.style import DefaultStyle
-chart = pygal.Bar(dynamic_print_values=True,print_values_position='bottom',
-                  style=DefaultStyle(
-                  value_font_family='googlefont:Raleway',
-                  value_font_size=30,
-                  value_colors=('black',)))
-chart.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0]])
-chart.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0]])
-chart.render_in_browser()
-    
 
 # =============================================================================
 # # Cuarto y Quinto Indicador (Porcentaje de Atenciones cerradas netas de tipo 
@@ -318,7 +309,7 @@ else:
     print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")
     
 # =============================================================================
-#                           Sexto Indicador
+#                           Sexto-Séptimo Indicador
 # =============================================================================
 import pandas as pd
 import numpy as np
@@ -410,75 +401,6 @@ while(l<np.shape(tipo)[0]):
     line_chart.render_to_file('line_chart_'+tipo[l]+'.svg')
     line_chart.render_in_browser()
     l+=1
-    
-# =============================================================================
-#              Séptimo indicador (N° de órdenes pendientes en 6 meses)
-# =============================================================================
-import pandas as pd
-import numpy as np
-from datetime import datetime
-from datetime import timedelta
-
-df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
-df1 = pd.DataFrame(df.iloc[:,1]) #Estado UEM
-
-df2 = pd.DataFrame(df.iloc[:,20]) #Fecha de inicio
-df2 = pd.DataFrame([j if type(j)!=str and j!='00-00-00000' else "NaN" for i,j in enumerate(df2['Fecha Inicio'])], columns = ['Fecha Inicio']).dropna()
-df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio'])
-
-df3 = df1.join(df2)
-df3 = df3[df3['Estado UEM'].notnull()]
-df3 = df3[df3['Fecha Inicio'].notnull()]
-
-flag = True
-while flag:
-    mes = input('\nIngrese Mes a buscar: ')
-    año = input('\nIngrese Año a buscar: ')
-    if len(mes)==0 or len(año)==0:
-        print("\nFavor ingrese un año y un mes válidos\n")
-    else:
-        flag = False
-        
-fecha  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-fechas = [fecha - timedelta(365*i/12) for i in range(1,7)]
-
-#Si en lugar de solo guardar los trabajos ocurridos esa fecha, guardo también la de los 6 meses posteriores, podría entonces, 
-#Hacer un filtro solo con este comando
-
-#Convertir todos los elementos en el dataframe para poder hacer uso del método str.contains() y compararlo con las fechas
-
-df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
-
-for i in fechas:
-    if len(str(i.month))==1:
-        aux = str(i.year) + "-0" + str(i.month)
-    else:
-        aux = str(i.year) + "-" + str(i.month)
-        
-    j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
-    
-    if j[0]!=0:
-        k = df3[df3['Fecha Inicio'].str.contains(aux)].iloc[1,:]
-
-    df_total_mes = pd.concat([df_total_mes, df3[df3['Fecha Inicio'].str.contains(aux)]])
-    
-# Se buscan el índice de los elementos en la columna 'Estado UEM' que satisfacen la condicion de decir 'TRABAJO TERMINADO'
-ord_pend = df_total_mes[~df_total_mes['Estado UEM'].isin(['TRABAJO TERMINADO'])]
-
-num_pendientes = np.shape(ord_pend)[0]
-num_trab = np.shape(df_total_mes)[0]
-
-#calculo porcentaje
-porcentaje = round((num_pendientes/num_trab) * 100,1)
-
-import pygal
-
-pie_chart = pygal.Pie()
-pie_chart.title = "Trabajos pendientes v/s Trabajos Cerrados en los 6 meses previos a {}".format(str(fecha.year)+'-'+
-                                                                                                 str(fecha.month))
-pie_chart.add("Trabajos Pendientes", porcentaje)
-pie_chart.add('Trabajo Terminado', 100-porcentaje)
-pie_chart.render_in_browser()
 
 # =============================================================================
 #   Octavo Indicador
@@ -495,12 +417,10 @@ df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
 df1 = pd.DataFrame(df.iloc[:,1]) #Estado UEM
 
 df2 = pd.DataFrame(df.iloc[:,20]) #Fecha de inicio
-df2 = pd.DataFrame([j if type(j)!=str and j!='00-00-00000' else "NaN" for i,j in enumerate(df2['Fecha Inicio'])], columns = ['Fecha Inicio']).dropna()
+df2 = pd.DataFrame([j if type(j)!=str and j!='00-00-00000' else np.nan for i,j in enumerate(df2['Fecha Inicio'])], columns = ['Fecha Inicio']).dropna()
 df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio'])
 
-df3 = df1.join(df2)
-df3 = df3[df3['Estado UEM'].notnull()]
-df3 = df3[df3['Fecha Inicio'].notnull()]
+df3 = df1.join(df2).dropna()
 
 flag = True
 while flag:
@@ -511,26 +431,24 @@ while flag:
     else:
         flag = False
         
-fecha  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+fecha  = datetime.strptime(año +"-" + contains0(mes) + '-28 13:10:19.93000', '%Y-%m-%d %H:%M:%S.%f')
 fechas = [fecha - timedelta(365*i/12) for i in range(1,7)]
 
 #Si en lugar de solo guardar los trabajos ocurridos esa fecha, guardo también la de los 6 meses posteriores, podría entonces, 
 #Hacer un filtro solo con este comando
-
+    
 #Convertir todos los elementos en el dataframe para poder hacer uso del método str.contains() y compararlo con las fechas
 
 df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
 
 for i in fechas:
-    if len(str(i.month))==1:
-        aux = str(i.year) + "-0" + str(i.month)
-    else:
-        aux = str(i.year) + "-" + str(i.month)
-        
-    j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
+    i = str(i.year) + "-0" + str(i.month)
+    j = np.shape(df3[df3['Fecha Inicio'].str.contains(i)])
     
     if j[0]!=0:
         k = df3[df3['Fecha Inicio'].str.contains(aux)].iloc[1,:]
+    else:
+        pass
 
     df_total_mes = pd.concat([df_total_mes, df3[df3['Fecha Inicio'].str.contains(aux)]])
     
@@ -594,7 +512,7 @@ while flag:
     else:
         print(f"type(m1) = {type(m1)}\ntype(m2) = {type(m2)}")
         m1 = contains0(m1)
-        m2 = contains0(m2)flag = True
+        m2 = contains0(m2)
 
         f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
         f2  = datetime.strptime(a2 +"-" +m2 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
@@ -626,6 +544,14 @@ for i in fechas:
 
 contador = np.shape(aux)[0]
 print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
+
+
+# =============================================================================
+# Contadores agrupables
+# =============================================================================
+
+# 1er, 2do
+
 
 # =============================================================================
 # Subir codigo
