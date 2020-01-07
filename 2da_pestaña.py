@@ -104,13 +104,17 @@ percent_formatter = lambda x: '{:.1g}%'.format(x)
 pie_chart = pygal.Pie(print_values = True)
 pie_chart.title = "% de OT T1 cerradas v/s total mes\n{}".format(fecha)
 
+tipos = {'t1':{},'t2':{}}
+
 if np.shape(mant_T1)[0]!=0:
     for x,y in enumerate(nom_tec):
         # print(x,y,resultados[x][y][0]['T1'])
         #todas las generadas - las abiertas (generadas - cerradas)
         # pie_chart.add(y,(resultados[x][y][0]['T1'])/np.shape(mant_T1)[0] * 100, formatter = percent_formatter)
-        pie_chart.add(y,round((resultados[x][y][0]['T1'])/np.shape(mant_T1)[0] * 100,1) )
-    pie_chart.render_in_browser()
+        # pie_chart.add(y,round((resultados[x][y][0]['T1'])/np.shape(mant_T1)[0] * 100,1) )
+        aux = {y:resultados[x][y][0]['T1']}
+        tipos['t1'].update(aux)
+    # pie_chart.render_in_browser()
 else:
     print("\nEn esta fecha no existen OT de tipo T1")
 
@@ -119,10 +123,12 @@ pie_chart .title = "% de OT T2 cerradas v/s total mes\n{}".format(fecha)
 
 if np.shape(mant_T2)[0]!=0:
     for x,y in enumerate(nom_tec):
-        print(x,y,resultados[x][y][1]['T2'])
+        # print(x,y,resultados[x][y][1]['T2'])
         #todas las generadas - las abiertas (generadas - cerradas)
-        pie_chart .add(y,round((resultados[x][y][1]['T2'])/np.shape(mant_cer_T2)[0] * 100,1))
-    pie_chart.render_in_browser()
+        # pie_chart .add(y,round((resultados[x][y][1]['T2'])/np.shape(mant_cer_T2)[0] * 100,1))
+    # pie_chart.render_in_browser()
+        aux = {y:resultados[x][y][0]['T1']}
+        tipos['t1'].update(aux)
 else:
     print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")
     

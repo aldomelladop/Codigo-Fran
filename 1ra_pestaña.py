@@ -10,6 +10,7 @@ Created on Thu Sep 12 21:31:42 2019
 # =============================================================================
 import pandas as pd
 import numpy as np
+from contains0 import contains0
 
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
 df1 = pd.DataFrame(df.iloc[:,1]) #Estado UEM
@@ -47,14 +48,14 @@ num_pendientes = np.shape(df_total_mes)[0]
 #calculo porcentaje
 porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
 
-import pygal
+# import pygal
 
-b_chart = pygal.SolidGauge(inner_radius=0.45)
-b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
-b_chart.add("Trabajos Completados", porcentaje)
-#b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
-#b_chart.add("Total Trabajos", num_trab)
-b_chart.render_in_browser()
+# b_chart = pygal.SolidGauge(inner_radius=0.45)
+# b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
+# b_chart.add("Trabajos Completados", porcentaje)
+# #b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
+# #b_chart.add("Total Trabajos", num_trab)
+# b_chart.render_in_browser()
 
 # =============================================================================
 #                               Segundo Indicador (?)
