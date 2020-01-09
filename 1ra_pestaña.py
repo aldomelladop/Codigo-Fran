@@ -109,17 +109,17 @@ num_to_filter = 3 #Cantidad de valores a filtrar
 ocurr = pd.DataFrame(sorted(ocurrencias.items(), key = lambda x:x[1], reverse = True)).iloc[:num_to_filter,:]
 flag =  any(ocurr.iloc[:,1])# verifica que la cantidad de OT para las unidades no sea 0
 
-import pygal
-b_chart = pygal.SolidGauge(inner_radius=0.75)
-b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
+# import pygal
+# b_chart = pygal.SolidGauge(inner_radius=0.75)
+# b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
 
-for i in range(num_to_filter):
-    if ocurr.iloc[i,1] !=0:
-        b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
-    else:
-        print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
+# for i in range(num_to_filter):
+#     if ocurr.iloc[i,1] !=0:
+#         b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
+#     else:
+#         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
 
-b_chart.render_in_browser()
+# b_chart.render_in_browser()
     
 #=============================================================================
 #                           Tercer Indicador (Contador)
@@ -174,10 +174,10 @@ mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
 
 print(f"\nLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)[0]}")
 
-import pygal
-hist = pygal.Histogram(print_values=True)
-# hist.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0],0,8])
+# import pygal
+# hist = pygal.Histogram(print_values=True)
+# # hist.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0],0,8])
 
-hist.add('N° Órdenes Abiertas',[(np.shape(mant_mes_ab)[0],0,5)])
-# hist.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0],5,10])
-hist.render_in_browser()
+# hist.add('N° Órdenes Abiertas',[(np.shape(mant_mes_ab)[0],0,5)])
+# # hist.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0],5,10])
+# hist.render_in_browser()

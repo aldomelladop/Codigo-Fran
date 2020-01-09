@@ -77,18 +77,20 @@ s3.legend.location = "top_center"
 
 # INDICADOR 4 y 5         
 
-factors = [
-    ("Técnico 1", "Tipo 1"), ("Técnico 1", "Tipo 2"),
-    ("Técnico 2", "Tipo 1"), ("Técnico 2", "Tipo 2"),
-    ("Técnico 3", "Tipo 1"), ("Técnico 3", "Tipo 2"),
-    ("Técnico 4", "Tipo 1"), ("Técnico 4", "Tipo 2"),
+# factors = [ (tipos[i].keys(),)
+#     ("Técnico 1", "Tipo 1"), ("Técnico 1", "Tipo 2"),
+#     ("Técnico 2", "Tipo 1"), ("Técnico 2", "Tipo 2"),
+#     ("Técnico 3", "Tipo 1"), ("Técnico 3", "Tipo 2"),
+#     ("Técnico 4", "Tipo 1"), ("Técnico 4", "Tipo 2"),
+# ]
 
-]
-s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="OT por técnico",
+factors = [(i, 'T1') for i in tipos['t1'].keys()] +[(i, 'T2') for i in tipos['t2'].keys()]
+
+s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
            toolbar_location=None, tools="")
-x = [ 10, 8, 9, 5, 10, 12, 8, 5 ]
+x = [tipos['t1'][i]  for i in tipos['t1'].keys()] +[tipos['t2'][i] for i in tipos['t2'].keys()]
 s4.vbar(x=factors, top=x, width=0.9, alpha=0.5)
-s4.line(x=["Técnico 1", "Técnico 2", "Técnico 3", "Técnico 4"], y=[9, 6, 11, 7], color="red", line_width=2)
+# s4.line(x=["Técnico 1", "Técnico 2", "Técnico 3", "Técnico 4"], y=[9, 6, 11, 7], color="red", line_width=2)
 s4.y_range.start = 0
 s4.x_range.range_padding = 0.1
 s4.xaxis.major_label_orientation = 1
@@ -141,7 +143,7 @@ s9.legend.location = "top_center"
 #                     plot_width=pw, plot_height=ph)
 
 grid = gridplot([[None, s1, s2, None, None], 
-                 [None, s3, None, None, None],
+                 [None, s3, s4, None, None],
                  [None, None, None, None, None]], 
                     plot_width=pw, plot_height=ph)
 show(grid)

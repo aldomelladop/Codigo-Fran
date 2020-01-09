@@ -34,20 +34,20 @@ flag = True
 #flag_mes = 0
 #flag_año = 0
 
-while flag:
-    mes = input('\nIngrese Mes a buscar: ')
-    año = input('\nIngrese Año a buscar: ')
+# while flag:
+#     mes = input('\nIngrese Mes a buscar: ')
+#     año = input('\nIngrese Año a buscar: ')
     
-#    flag_mes = int(mes) #copia de los valores de mes y año ingresados que no modifican originales
-#    flag_año = int(año) #se hace un casteo para corroborar formato
+# #    flag_mes = int(mes) #copia de los valores de mes y año ingresados que no modifican originales
+# #    flag_año = int(año) #se hace un casteo para corroborar formato
     
-#    if len(mes)==0 or len(año)==0 or flag_mes not in range(1,13): #se hace el filtro para la condición que no cumple
-    if len(mes)==0 or len(año)==0:
-        print("\nFavor ingrese un año y un mes válidos\n")
-    else:
-        flag = False
+# #    if len(mes)==0 or len(año)==0 or flag_mes not in range(1,13): #se hace el filtro para la condición que no cumple
+#     if len(mes)==0 or len(año)==0:
+#         print("\nFavor ingrese un año y un mes válidos\n")
+#     else:
+#         flag = False
         
-fecha  = año +"-" + contains0(mes)
+# fecha  = año +"-" + contains0(mes)
 
 # =============================================================================
 # #mant_mes_gen  = df4[df4['Fecha Inicio'].str.contains(fecha)]
@@ -84,10 +84,6 @@ mant_cer_T2 = df4[df4['Fecha Termino6'].str.contains(fecha)]
 mant_cer_T2 = mant_cer_T2[mant_cer_T2['Nombre Técnico'].isin(nom_tec)]
 mant_cer_T2 = mant_cer_T2[mant_cer_T2['Tipo de mantención']=='T2']
 
-
-#mant_cer_T3 = mant_T3[mant_T3['Fecha Termino6'].str.contains(fecha)]
-#mant_cer_T4 = mant_T4[mant_T4['Fecha Termino6'].str.contains(fecha)]
-
 T = ["T1", "T2"]
 aux = {}
 
@@ -99,10 +95,10 @@ for s,t in enumerate(nom_tec):
     
 resultados = [aux[i] for i,j in enumerate(aux.items())]
 
-percent_formatter = lambda x: '{:.1g}%'.format(x)
+# percent_formatter = lambda x: '{:.1g}%'.format(x)
 
-pie_chart = pygal.Pie(print_values = True)
-pie_chart.title = "% de OT T1 cerradas v/s total mes\n{}".format(fecha)
+# # pie_chart = pygal.Pie(print_values = True)
+# # pie_chart.title = "% de OT T1 cerradas v/s total mes\n{}".format(fecha)
 
 tipos = {'t1':{},'t2':{}}
 
@@ -121,16 +117,19 @@ else:
 pie_chart = pygal.Pie(print_values = True)
 pie_chart .title = "% de OT T2 cerradas v/s total mes\n{}".format(fecha)
 
-if np.shape(mant_T2)[0]!=0:
-    for x,y in enumerate(nom_tec):
-        # print(x,y,resultados[x][y][1]['T2'])
-        #todas las generadas - las abiertas (generadas - cerradas)
-        # pie_chart .add(y,round((resultados[x][y][1]['T2'])/np.shape(mant_cer_T2)[0] * 100,1))
-    # pie_chart.render_in_browser()
+# if 
+for x,y in enumerate(nom_tec):
+    if np.shape(mant_T2)[0]!=0:
+    # print(x,y,resultados[x][y][1]['T2'])
+    #todas las generadas - las abiertas (generadas - cerradas)
+    # pie_chart .add(y,round((resultados[x][y][1]['T2'])/np.shape(mant_cer_T2)[0] * 100,1))
+# pie_chart.render_in_browser()
         aux = {y:resultados[x][y][0]['T1']}
-        tipos['t1'].update(aux)
-else:
-    print("\nEn esta fecha no existen OT de tipo T2\nNo se desplegará gráfico")
+        tipos['t2'].update(aux)
+    else:
+        aux = {y:0}
+        tipos['t2'].update(aux)
+        print("\nEn {} no existen OT de tipo T2".format(fecha))
     
 # =============================================================================
 #                           Sexto-Séptimo Indicador
@@ -192,7 +191,6 @@ while(l<np.shape(tipo)[0]):
             aux2 = pd.DataFrame([[j,tipo[l],i,round(promedio,1)]],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])    
             globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = globals()['prom_hh_eq_tec_{}'.format(tipo[l])].append(aux2).dropna() #NaN borrados. Usado para calcular apropiadamente el promedio de hh
 
-
     for x in equipos:
         for i in nom_tec:
             aux1 = globals()['prom_hh_eq_tec_{}'.format(tipo[l])][globals()['prom_hh_eq_tec_{}'.format(tipo[l])]['Equipo'].str.contains(x)]
@@ -204,7 +202,6 @@ while(l<np.shape(tipo)[0]):
             else:
                 pass
 
-
     for j in equipos:
         for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
             if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
@@ -214,14 +211,12 @@ while(l<np.shape(tipo)[0]):
     # =============================================================================
     # Grafico  
     # =============================================================================
+    # line_chart = pygal.Bar(x_label_rotation=20)
+    # line_chart.title = 'Eficiencia técnicos atenciones de tipo ' + tipo[l]
+    # line_chart.x_labels = map(str, nom_tec)
+    # line_chart.x_labels_major = ['This is the first point !', 'This is the fourth point !']
     
-               
-    line_chart = pygal.Bar(x_label_rotation=20)
-    line_chart.title = 'Eficiencia técnicos atenciones de tipo ' + tipo[l]
-    line_chart.x_labels = map(str, nom_tec)
-    line_chart.x_labels_major = ['This is the first point !', 'This is the fourth point !']
-    
-    line_chart.add('Hola', [None, None, 0, 16.6,   25,   31, 36.4, 45.5, 46.3, 42.8, 37.1])
-    line_chart.render_to_file('line_chart_'+tipo[l]+'.svg')
-    line_chart.render_in_browser()
+    # line_chart.add('Hola', [None, None, 0, 16.6,   25,   31, 36.4, 45.5, 46.3, 42.8, 37.1])
+    # line_chart.render_to_file('line_chart_'+tipo[l]+'.svg')
+    # line_chart.render_in_browser()
     l+=1
