@@ -45,8 +45,11 @@ df_total_mes.drop(indexNames , inplace=True)
 # contar la cantidad de filas que tienen por estado 'Pendiente'
 num_pendientes = np.shape(df_total_mes)[0]
 
-#calculo porcentaje
-porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+if num_trab!=0:
+    #calculo porcentaje
+    porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+else:
+    print("División por 0")
 
 # import pygal
 
