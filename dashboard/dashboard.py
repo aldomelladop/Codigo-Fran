@@ -82,38 +82,54 @@ factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2
 s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
            toolbar_location=None, tools="")
 x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
-s4.vbar(x=factors, top=x, width=0.9, alpha=0.5)
+s4.vbar(x=factors, top=x, width=0.4, alpha=0.5)
 s4.y_range.start = 0
-s4.x_range.range_padding = 0.1
+s4.x_range.range_padding = 0.05
 s4.xaxis.major_label_orientation = 1
 s4.xgrid.grid_line_color = None
 
-
 # INDICADOR 6 y 7
+factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
 
-x = list(range(11))
-y0 = x
-y1 = [10 - i for i in x]
-y2 = [abs(i - 5) for i in x]
-
-s6 = figure(plot_width=250, plot_height=250, background_fill_color="#fafafa")
-s6.square(x, y2, size=12, color="#d95b43", alpha=0.8)
-
-s7 = figure(plot_width=250, plot_height=250, background_fill_color="#fafafa")
-s7.square(x, y2, size=12, color="#d95b43", alpha=0.8)
+s5 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+           toolbar_location=None, tools="")
+x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
+s6.vbar(x=factors, top=x, width=0.4, alpha=0.5)
+s6.y_range.start = 0
+s6.x_range.range_padding = 0.05
+s6.xaxis.major_label_orientation = 1
+s6.xgrid.grid_line_color = None
 
           
 # INDICADOR 8
-fruits = ['Pendientes', 'Terminadas']
-counts = [70, 30]
-source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s8 = figure(x_range=fruits, y_range=(0,100), plot_height=ph, title="OT pendientes últimos 6 meses",
-           toolbar_location=None, tools="")
-s8.vbar(x='fruits', top='counts', width=0.7, color='color', legend_field="fruits", source=source)
-s8.xgrid.grid_line_color = None
-s8.legend.orientation = "horizontal"
-s8.legend.location = "top_center"
+# fruits = ['Abiertas', 'Terminadas']
+# counts = [100-porcentaje_c, porcentaje_c ]
+# source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
+# s8 = figure(x_range=fruits, y_range=(0,(100-porcentaje_c)+50), plot_height=ph, title="OT pendientes últimos 6 meses",
+#            toolbar_location=None, tools="")
+# s8.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
+# s8.xgrid.grid_line_color = None
+# s8.legend.orientation = "horizontal"
+# s8.legend.location = "top_center"
 
+x  = {'Terminada': 100-porcentaje_c, 'Pendiente':porcentaje_c, '':0}
+
+data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
+data['angle'] = data['value']/data['value'].sum() * 2*pi
+data['color'] = Category20c[len(x)]
+# data['color'] = chart_colors[:len(x)]
+
+
+s8 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
+           tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
+s8.wedge(x=0, y=1, radius=0.4,
+        start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+        line_color="white", fill_color='color', legend_field='unidad', source=data)
+s8.axis.axis_label=None
+s8.axis.visible=False
+s8.grid.grid_line_color = None
+
+    
 # INDICADOR 9
 
 fruits = ['Equipo 1', 'Equipo 2', 'Equipo 3', 'Equipo 4', 'Equipo 5', 'Equipo 6']
@@ -136,6 +152,6 @@ s9.legend.location = "top_center"
 
 grid = gridplot([[None, s1, s2, None, None], 
                  [None, s3, s4, None, None],
-                 [None, None, None, None, None]], 
+                 [None, s8, s9, None, None]], 
                     plot_width=pw, plot_height=ph)
 show(grid)

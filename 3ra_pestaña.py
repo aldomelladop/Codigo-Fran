@@ -18,14 +18,14 @@ df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=obje
 
 df3 = df1.join(df2).dropna()
 
-flag = True
-while flag:
-    mes = input('\nIngrese Mes a buscar: ')
-    año = input('\nIngrese Año a buscar: ')
-    if len(mes)==0 or len(año)==0:
-        print("\nFavor ingrese un año y un mes válidos\n")
-    else:
-        flag = False
+# flag = True
+# while flag:
+#     mes = input('\nIngrese Mes a buscar: ')
+#     año = input('\nIngrese Año a buscar: ')
+#     if len(mes)==0 or len(año)==0:
+#         print("\nFavor ingrese un año y un mes válidos\n")
+#     else:
+#         flag = False
         
 fecha  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
 fechas = [fecha - timedelta(365*i/12) for i in range(1,7)]
@@ -58,14 +58,6 @@ num_trab = np.shape(df_total_mes)[0]
 
 #calculo porcentaje
 if num_trab!=0:
-    porcentaje = round((num_pendientes/num_trab) * 100,1)
-    import pygal
-
-    pie_chart = pygal.Pie()
-    pie_chart.title = "Trabajos pendientes v/s Trabajos Cerrados en los 6 meses previos a {}".format(str(fecha.year)+'-'+ str(fecha.month))
-    pie_chart.add("Trabajos Pendientes", porcentaje)
-    pie_chart.add('Trabajo Terminado', 100-porcentaje)
-    pie_chart.render_in_browser()
-
+    porcentaje_c = round((num_pendientes/num_trab) * 100,1)
 else:
     print(f"num_trab  = {num_trab}")

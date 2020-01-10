@@ -153,6 +153,5 @@ while(l<np.shape(tipo)[0]):
     for j in equipos:
         for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
             if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
-                # globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = str(round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)*100) +'%'
                 globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)
     l+=1

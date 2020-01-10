@@ -4,7 +4,6 @@
 Created on Thu Sep 12 21:31:42 2019
 @author: aldo_mellado
 """
-
 # =============================================================================
 #              Primer indicador (% de órdenes cerradas en el mes)
 # =============================================================================
@@ -50,22 +49,14 @@ if num_trab!=0:
     porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
 else:
     print("División por 0")
-
-# import pygal
-
-# b_chart = pygal.SolidGauge(inner_radius=0.45)
-# b_chart.title = "Órdenes de Trabajo Cerrados en\n{}".format(fecha)
-# b_chart.add("Trabajos Completados", porcentaje)
-# #b_chart.add("Trabajos Terminados", num_trab-num_pendientes)
-# #b_chart.add("Total Trabajos", num_trab)
-# b_chart.render_in_browser()
-
+    
 # =============================================================================
 #                               Segundo Indicador (?)
-
+    
 # En esta parte haremos que se solicite un mes y una unidad en particular, 
 # para entonces, mostrar las órdenes de trabajo asociadas a dicha unidad en dicho mes.
 # =============================================================================
+
 import pandas as pd
 import numpy as np
 
@@ -91,8 +82,6 @@ df3 = df1.join(df2).dropna() #Unir ambos dataFrame para relacionarlos
 
 unidades = np.unique(list(df1.iloc[1:,0])) #Me permite encontrar sin repeticion los nombres de los Servicios o Unidades disponibles
 
-#opcion = input("Para filtrar los da2017-02'tos, ingrese:\na) Si desea filtrar por mes\nSi desea filtrar por año\nc)Si desea filtrar por Unidad\nd)Si desea filtrar por unidad y año\ne)Si desea filtrar por unidad y mes")
-
 # Filtro por fecha
 # Se ingresa el la fecha que se desea filtrar y aparecen las OT en esa fecha para todas las unidades
 
@@ -111,22 +100,10 @@ for i in unidades:
 num_to_filter = 3 #Cantidad de valores a filtrar
 ocurr = pd.DataFrame(sorted(ocurrencias.items(), key = lambda x:x[1], reverse = True)).iloc[:num_to_filter,:]
 flag =  any(ocurr.iloc[:,1])# verifica que la cantidad de OT para las unidades no sea 0
-
-# import pygal
-# b_chart = pygal.SolidGauge(inner_radius=0.75)
-# b_chart.title = "Num_SoU/Num tot Trab {} ".format(fecha)
-
-# for i in range(num_to_filter):
-#     if ocurr.iloc[i,1] !=0:
-#         b_chart.add(ocurr.iloc[i,0], (ocurr.iloc[i,1]/num_trab)*100)
-#     else:
-#         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
-
-# b_chart.render_in_browser()
     
 #=============================================================================
 #                           Tercer Indicador (Contador)
-# OT abiertas
+#                               OT abiertas
 #=============================================================================
 nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
            'GUIDO VICENCIO','IGNACIO VALDIVIA',
@@ -176,11 +153,3 @@ print(f"\nLa cantidad de órdenes abiertas en {fecha} es: {np.shape(mant_mes_ab)
 mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
 
 print(f"\nLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)[0]}")
-
-# import pygal
-# hist = pygal.Histogram(print_values=True)
-# # hist.add('N° Órdenes Cerradas', [np.shape(mant_mes_cr)[0],0,8])
-
-# hist.add('N° Órdenes Abiertas',[(np.shape(mant_mes_ab)[0],0,5)])
-# # hist.add('N° Órdenes Abiertas',[np.shape(mant_mes_ab)[0],5,10])
-# hist.render_in_browser()
