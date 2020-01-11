@@ -155,8 +155,10 @@ for i in range(num_to_filter):
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
-data['color'] = Spectral6[len(x)]
+data['color'] = Category20[len(x)]
+# data['color'] = chart_colors[:len(x)]
 
+#print(data)
 s2 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
            tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
 s2.wedge(x=0, y=1, radius=0.4,
@@ -165,7 +167,7 @@ s2.wedge(x=0, y=1, radius=0.4,
 s2.axis.axis_label=None
 s2.axis.visible=False
 s2.grid.grid_line_color = None
-print(f"\n\tSegundo Indicador listo")
+
 
 # =============================================================================
 #                                   INDICADOR 3          
