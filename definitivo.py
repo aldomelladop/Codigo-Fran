@@ -87,7 +87,7 @@ data['angle'] = data['value']/sum(x.values()) * 2*pi
 data['color'] = Category20c[len(x)]
 
 s1 = figure(plot_height=350, title="% OT Cerradas en {}".format(fecha), toolbar_location=None,
-           tools="hover", tooltips=[("Country", "@country"),("Value", "@value")])
+           tools="hover", tooltips=[("Cerradas", "@country"),("Value", "@value")])
 
 s1.annular_wedge(x=0, y=1, inner_radius=0.2, outer_radius=0.4,
                 start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
@@ -209,7 +209,7 @@ fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
 counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
-s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+50), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
+s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ np.max(counts)%10), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
            toolbar_location=None, tools="")
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
@@ -290,12 +290,13 @@ if np.shape(mant_T1)[0]!=0:
 else:
     print("\nEn esta fecha no existen OT de tipo T1")
 
-if np.shape(mant_T2)[0]!=0:
-    for x,y in enumerate(nom_tec):
+
+for x,y in enumerate(nom_tec):
+    if np.shape(mant_T2)[0]!=0:
         tipos['T2'].update({y:resultados[x][y][1]['T2']})
-else:
-    tipos['T2'].update({y:0})
-    print("\nEn {} no existen OT de tipo T2".format(fecha))
+    else:
+        tipos['T2'].update({y:0})
+        print("\nEn {} no existen OT de tipo T2".format(fecha))
 
 # =============================================================================
 #                                 INDICADOR 4 y 5         
@@ -451,11 +452,9 @@ df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
 for i in fechas:
     if len(str(i.month))==1:
         aux = str(i.year) + "-0" + str(i.month)
-        print(aux)
     else:
         aux = str(i.year) + "-" + str(i.month)
-        print(aux)
-        
+       
     j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
     
     if j[0]!=0:
