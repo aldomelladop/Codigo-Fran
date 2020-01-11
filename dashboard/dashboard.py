@@ -1,13 +1,14 @@
 from bokeh.io import output_file, show
 from bokeh.layouts import column, row, gridplot
 from bokeh.plotting import figure
+
 from math import pi
 
 import pandas as pd
 
-from bokeh.palettes import Category20c
-from bokeh.palettes import Spectral6
-from bokeh.transform import cumsum
+from bokeh.palettes import Category20c,Category20
+from bokeh.palettes import Cividis, Oranges, Spectral6
+from bokeh.transform import cumsum, factor_cmap
 from bokeh.models import ColumnDataSource, FactorRange
 
 output_file("dashboard.html")
@@ -36,7 +37,6 @@ s1.grid.grid_line_color = None
                     
 # INDICADOR 2          
 
-# x = { 'Oftalmología': 157, 'Pediatría': 93}
 x  = {}
 for i in range(num_to_filter):
     if ocurr.iloc[i,1] !=0:
@@ -48,7 +48,7 @@ for i in range(num_to_filter):
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
-data['color'] = Category20c[len(x)]
+data['color'] = Category20[len(x)]
 # data['color'] = chart_colors[:len(x)]
 
 #print(data)
@@ -79,7 +79,7 @@ s3.legend.location = "top_center"
 
 factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
 
-s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
            toolbar_location=None, tools="")
 x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
 s4.vbar(x=factors, top=x, width=0.4, alpha=0.5)
@@ -88,39 +88,53 @@ s4.x_range.range_padding = 0.05
 s4.xaxis.major_label_orientation = 1
 s4.xgrid.grid_line_color = None
 
-# INDICADOR 6 y 7
-factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
-
-s5 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+# =============================================================================
+# INDICADOR 6
+# =============================================================================
+factors = [(tabla_T1.iloc[i,2],tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
+s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
            toolbar_location=None, tools="")
-x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
-s6.vbar(x=factors, top=x, width=0.4, alpha=0.5)
+x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
+# source = ColumnDataSource(data=dict(x=x, counts=factors))
+
+# s6.vbar(x='x', top='x', width=0.3, alpha = 1, legend_field = 'factors', source=source, line_color="white",
+
+#        # use the palette to colormap based on the the x[1:2] values
+#        fill_color=factor_cmap('x', palette=palette, factors=years, start=1, end=2))
+
+# s6.vbar(x=factors, top=x, width=0.3, alpha=1, legend_field="factors",fill_color=factor_cmap('factors', palette=Category20c, factors=factors))
+s6.vbar(x=factors, top=x, width=0.3, alpha=1)
 s6.y_range.start = 0
-s6.x_range.range_padding = 0.05
+s6.x_range.range_padding = 0.2
 s6.xaxis.major_label_orientation = 1
 s6.xgrid.grid_line_color = None
 
+# =============================================================================
+# INDICADOR 7
+# =============================================================================
+try:
+    factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]
+
+    s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
+               toolbar_location=None, tools="")
+    x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
+    s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
+    s7.y_range.start = 0
+    s7.x_range.range_padding = 0.05
+    s7.xaxis.major_label_orientation = 1
+    s7.xgrid.grid_line_color = None
+except:
+    print("No existen órdenes de Tipo T2 en {}".format(fecha))
+
           
 # INDICADOR 8
-# fruits = ['Abiertas', 'Terminadas']
-# counts = [100-porcentaje_c, porcentaje_c ]
-# source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-# s8 = figure(x_range=fruits, y_range=(0,(100-porcentaje_c)+50), plot_height=ph, title="OT pendientes últimos 6 meses",
-#            toolbar_location=None, tools="")
-# s8.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
-# s8.xgrid.grid_line_color = None
-# s8.legend.orientation = "horizontal"
-# s8.legend.location = "top_center"
-
 x  = {'Terminada': 100-porcentaje_c, 'Pendiente':porcentaje_c, '':0}
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
-data['color'] = Category20c[len(x)]
-# data['color'] = chart_colors[:len(x)]
+data['color'] = Oranges[len(x)]
 
-
-s8 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
+s8 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(str(fecha.year) + '-' + contains0(str(fecha.month))), toolbar_location=None,
            tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
 s8.wedge(x=0, y=1, radius=0.4,
         start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
@@ -132,16 +146,16 @@ s8.grid.grid_line_color = None
     
 # INDICADOR 9
 
-fruits = ['Equipo 1', 'Equipo 2', 'Equipo 3', 'Equipo 4', 'Equipo 5', 'Equipo 6']
-counts = [70, 30, 40, 12, 15, 22]
-source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,100), plot_height=ph, title="Reincidencias por equipo",
-           toolbar_location=None, tools="")
-s9.vbar(x='fruits', top='counts', width=0.7, color='color', legend_field="fruits", source=source)
-s9.xgrid.grid_line_color = None
-s9.legend.orientation = "horizontal"
-s9.legend.location = "top_center"
+factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
 
+s9 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerlegendradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
+           toolbar_location=None, tools="")
+x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
+s9.vbar(x=factors, top=x, width=0.4, alpha=0.5)
+s9.y_range.start = 0
+s9.x_range.range_padding = 0.05
+s9.xaxis.major_label_orientation = 1
+s9.xgrid.grid_line_color = None
 
           
 # make a grid
@@ -150,8 +164,9 @@ s9.legend.location = "top_center"
 #                  [None, s7, s8, s9, None]], 
 #                     plot_width=pw, plot_height=ph)
 
-grid = gridplot([[None, s1, s2, None, None], 
-                 [None, s3, s4, None, None],
-                 [None, s8, s9, None, None]], 
+grid = gridplot([[s1, s2, s3], 
+                 [None,s4,None],
+                 [s6,None, s7],
+                 [s8,None, s9]], 
                     plot_width=pw, plot_height=ph)
 show(grid)

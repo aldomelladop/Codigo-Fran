@@ -61,3 +61,5 @@ if num_trab!=0:
     porcentaje_c = round((num_pendientes/num_trab) * 100,1)
 else:
     print(f"num_trab  = {num_trab}")
+
+print(f"\nOctavo Indicador listo\n")

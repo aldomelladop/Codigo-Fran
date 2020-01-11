@@ -49,6 +49,8 @@ if num_trab!=0:
     porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
 else:
     print("División por 0")
+
+print(f"\nPrimer Indicador listo\n")
     
 # =============================================================================
 #                               Segundo Indicador (?)
@@ -94,12 +96,14 @@ ocurrencias = {
 
 for i in unidades:
     num_ot_uni_mes = np.shape(ot_mes.loc[ot_mes['Servicio o Unidad'] == i])[0]
-    print(f"num_ot_uni_mes = {num_ot_uni_mes}\t Servicio o Unidad = {i}")
+    # print(f"num_ot_uni_mes = {num_ot_uni_mes}\t Servicio o Unidad = {i}")
     ocurrencias[i] = num_ot_uni_mes
     
 num_to_filter = 3 #Cantidad de valores a filtrar
 ocurr = pd.DataFrame(sorted(ocurrencias.items(), key = lambda x:x[1], reverse = True)).iloc[:num_to_filter,:]
 flag =  any(ocurr.iloc[:,1])# verifica que la cantidad de OT para las unidades no sea 0
+
+print(f"Segundo Indicador listo")
     
 #=============================================================================
 #                           Tercer Indicador (Contador)
@@ -153,3 +157,5 @@ print(f"\nLa cantidad de órdenes abiertas en {fecha} es: {np.shape(mant_mes_ab)
 mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
 
 print(f"\nLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)[0]}")
+
+print(f"\nTercer Indicador listo\n")

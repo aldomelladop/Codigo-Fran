@@ -31,22 +31,24 @@ while flag:
     a1 = input('\tAño: ')
     m1 = input('\tMes: ')
     
-    print('\nIngrese Fecha término (f2) de búsqueda: ')
+    print('\nIngrese Fecha Término (f2) de búsqueda: ')
     a2 = input('\tAño: ')
     m2 = input('\tMes: ')
     
     if len(a2)==0 or len(a2)==0 or len(m1)==0 or len(m2)==0:
         print("\nFavor corrija los datos ingresados por uno válido\n")
+    elif a2<a1:
+        print(f"\nEl año de término {a2} es menor que el año de inicio {a1}\n")
     else:
-        print(f"type(m1) = {type(m1)}\ntype(m2) = {type(m2)}")
+        # print(f"type(m1) = {type(m1)}\ntype(m2) = {type(m2)}")
         m1 = contains0(m1)
-        m2 = contains0(m2)flag = True
+        m2 = contains0(m2)
 
         f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
         f2  = datetime.strptime(a2 +"-" +m2 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
         
         flag = False
-        print(f"\nelse:\nm1 = {m1}, m2 = {m2}")
+        # print(f"\nelse:\nm1 = {m1}, m2 = {m2}")
         
 # =============================================================================
 #   Revisar si el numero contiene 0 o no. En caso que no, agregarlo. 
@@ -58,7 +60,7 @@ while flag:
 
 # Filtrar por serie
 filtro_serie = df4[df4['Serie'].str.contains(serie)]
-# diferencia entre fechas 
+# diferencia entre fechas
 # Representa la cantidad de meses y años que hay de diferencia entre la f1 y la f2
 
 dbd = (f2 -f1).days/30

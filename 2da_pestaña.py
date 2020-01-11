@@ -81,13 +81,15 @@ if np.shape(mant_T2)[0]!=0:
 else:
     tipos['T2'].update({y:0})
     print("\nEn {} no existen OT de tipo T2".format(fecha))
-    
+
+print(f"\nCuarto Indicador listo")
+print(f"Quinto Indicador listo")
 # =============================================================================
 #                           Sexto-Séptimo Indicador
 # =============================================================================
 import pandas as pd
 import numpy as np
-import pygal
+
 
 nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
            'GUIDO VICENCIO','IGNACIO VALDIVIA',
@@ -155,3 +157,6 @@ while(l<np.shape(tipo)[0]):
             if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
                 globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)
     l+=1
+
+print(f"Sexto Indicador listo")
+print(f"Séptimo Indicador listo\n")
