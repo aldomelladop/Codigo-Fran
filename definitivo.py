@@ -70,7 +70,11 @@ num_pendientes = np.shape(df_total_mes)[0]
 
 if num_trab!=0:
     #calculo porcentaje
-    porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+    try:
+        porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+    except:
+        print("División por 0")
+        s1 = None        
 else:
     print("División por 0")
 
@@ -504,11 +508,14 @@ import os
 print(f"\nNoveno Indicador\n")
 
 df1 = pd.DataFrame(df.iloc[:,7])# Serie
-df1 = pd.DataFrame([np.nan if j in ['SN','S/N','sn','na','nan'] else str(j) for i,j in enumerate(df1['Serie'])], columns = ['Serie'])
+# df1 = pd.DataFrame([np.drop(j) if j in ['SN','S/N','sn','na','nan'] else str(j) for i,j in enumerate(df1['Serie'])], columns = ['Serie'])
+df1 = pd.DataFrame([str(j) for i,j in enumerate(df1['Serie'])], columns = ['Serie'])
+df1 = df1[~df1['Serie'].isin(['SN','S/N','sn','na','nan'])]
 df1 = df1.dropna()
 
 df2 = pd.DataFrame(df.iloc[:,9]) #Fecha recepción
 df2 = pd.DataFrame([str(j) if type(j)!=str and j!='00-00-00000' else np.nan for i,j in enumerate(df2['Fecha recepcion OT'])], columns = ['Fecha recepcion OT'])
+df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
 df2 = df2.dropna()
 
 df3 = pd.DataFrame(df.iloc[:,11]) #Clasificación
@@ -556,6 +563,7 @@ fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fe
 aux = pd.DataFrame([])
 
 for i in fechas:
+    print(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)])
     aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = True)
 
 contador = np.shape(aux)[0]
