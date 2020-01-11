@@ -50,8 +50,8 @@ df3 = df1.join(df2).dropna() #fusiona ambos archivos; Estado UEM y Fecha Inicio,
 flag = True
 #while usado para que solicite los datos hasta que estos sean válidos
 while flag:
-    mes = input('\nIngrese Mes a buscar: ')
-    año = input('\nIngrese Año a buscar: ')
+    mes = input('\n\tIngrese Mes a buscar: ')
+    año = input('\tIngrese Año a buscar: ')
     if len(mes)==0 or len(año)==0:
         print("\nFavor ingrese un año y un mes válidos\n")
     else:
@@ -500,6 +500,7 @@ print(f"\n\tOctavo Indicador listo")
 #                                   Noveno Indicador
 # =============================================================================
 # Si en input pongo "SN" debe decirme cuantas veces aparece SN entre la fecha que indique
+import os 
 
 print(f"\nNoveno Indicador\n")
 
@@ -522,12 +523,12 @@ flag = True
 while flag:
     serie = input('\nIngrese Equipo (Serie) a buscar: ')
     print('\nIngrese Fecha Inicio  (f1) de búsqueda: ')
-    a1 = input('\tAño: ')
     m1 = input('\tMes: ')
+    a1 = input('\tAño: ')
     
     print('\nIngrese Fecha término (f2) de búsqueda: ')
-    a2 = input('\tAño: ')
     m2 = input('\tMes: ')
+    a2 = input('\tAño: ')
     
     if len(a2)==0 or len(a2)==0 or len(m1)==0 or len(m2)==0:
         print("\nFavor corrija los datos ingresados por uno válido\n")
@@ -576,13 +577,13 @@ print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1
 # s9.xaxis.major_label_orientation = 1
 # s9.xgrid.grid_line_color = None
 
-fruits = ['Equipo 1']
-counts = [70]
+fruits = [str(serie)]
+counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,100), plot_height=ph, title="Reincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + 10), plot_height=ph, title="Reincidencias por equipo",
            toolbar_location=None, tools="")
-s9.vbar(x='fruits', top='counts', width=0.7, color='color', legend_field="fruits", source=source)
+s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
 s9.legend.orientation = "horizontal"
 s9.legend.location = "top_center"
@@ -592,9 +593,16 @@ print(f"\n\tNoveno Indicador listo")
 #                       GENERAR DASHBOARD
 # =============================================================================
 
-grid = gridplot([[s1, s2, s3], 
-                 [None,s4,None],
+grid = gridplot([[s1, None, s2], 
+                 [s3,None,s4],
                  [s6,None, s7],
                  [s8,None, s9]], 
                     plot_width=pw, plot_height=ph)
 show(grid)
+
+# =============================================================================
+# Subir codigo
+# =============================================================================
+os.popen("git add .")
+os.popen("git commit -m 'Actualizando repositorio'")
+os.popen("git push")
