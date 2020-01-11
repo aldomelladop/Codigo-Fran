@@ -212,7 +212,7 @@ fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
 counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
-s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+50), plot_height=ph, title="OT abiertas y cerradas",
+s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+50), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
            toolbar_location=None, tools="")
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
@@ -581,7 +581,7 @@ fruits = [str(serie)]
 counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,contador + 10), plot_height=ph, title="Reincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + contador%10), plot_height=ph, title="Reincidencias por equipo",
            toolbar_location=None, tools="")
 s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
@@ -606,3 +606,5 @@ show(grid)
 os.popen("git add .")
 os.popen("git commit -m 'Actualizando repositorio'")
 os.popen("git push")
+
+os.popen("exit")
