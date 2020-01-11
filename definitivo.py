@@ -7,9 +7,11 @@ Created on Thu Sep 12 21:31:42 2019
 # =============================================================================
 # Import global
 # =============================================================================
-from datetime import datetime
+from contains0 import contains0
 from datetime import timedelta
-
+from datetime import datetime
+import pandas as pd
+import numpy as np
 # =============================================================================
 #                                      Dashboard
 # =============================================================================
@@ -18,9 +20,6 @@ from bokeh.layouts import gridplot
 from bokeh.plotting import figure
 
 from math import pi
-
-import pandas as pd
-
 from bokeh.palettes import Category20c,Category20
 from bokeh.palettes import Oranges, Spectral6
 from bokeh.transform import cumsum
@@ -34,8 +33,6 @@ pw, ph = 500,500
 #                               Primer indicador 
 #                       (% de órdenes cerradas en el mes)
 # =============================================================================
-import numpy as np
-from contains0 import contains0
 
 print(f"\n* Primer indicador")
 df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
@@ -154,7 +151,7 @@ for i in range(num_to_filter):
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
-data['color'] = Category20[len(x)]
+data['color'] = Spectral6[len(x)]
 
 s2 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
            tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
@@ -454,13 +451,16 @@ df_total_mes = pd.DataFrame([],columns = ['Estado UEM','Fecha Inicio'])
 for i in fechas:
     if len(str(i.month))==1:
         aux = str(i.year) + "-0" + str(i.month)
+        print(aux)
     else:
         aux = str(i.year) + "-" + str(i.month)
+        print(aux)
         
     j = np.shape(df3[df3['Fecha Inicio'].str.contains(aux)])
     
     if j[0]!=0:
-        k = df3[df3['Fecha Inicio'].str.contains(aux)].iloc[1,:]
+        k = df3[df3['Fecha Inicio'].str.contains(aux)]
+        # k = k.iloc[1,:]
 
     df_total_mes = pd.concat([df_total_mes, df3[df3['Fecha Inicio'].str.contains(aux)]])
     
@@ -477,7 +477,7 @@ else:
     print(f"\tnum_trab  = {num_trab}\n")
 
 # =============================================================================
-#                                   INDICADOR 8
+#                              DASHBOARD  INDICADOR 8
 # =============================================================================
 x  = {'Terminada': 100-porcentaje_c, 'Pendiente':porcentaje_c, '':0}
 
