@@ -90,7 +90,7 @@ data = pd.DataFrame.from_dict(dict(x), orient='index').reset_index().rename(inde
 data['angle'] = data['value']/sum(x.values()) * 2*pi
 data['color'] = Category20c[len(x)]
 
-s1 = figure(plot_height=350, title="% OT Cerradas en {}".format(fecha), toolbar_location=None,
+s1 = figure(plot_height=350, title="* Primer Indicador: \t% OT Cerradas en {}".format(fecha), toolbar_location=None,
            tools="hover", tooltips=[("Cerradas", "@country"),("Value", "@value")])
 
 s1.annular_wedge(x=0, y=1, inner_radius=0.2, outer_radius=0.4,
@@ -148,10 +148,11 @@ x  = {}
 for i in range(num_to_filter):
     if ocurr.iloc[i,1] !=0:
         aux =  {'{}'.format(ocurr.iloc[i,0]): round((ocurr.iloc[i,1]/num_trab)*100,2)}    
+        x.update(aux)
     else:
         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
-    
-    x.update(aux)
+
+x = pd.DataFrame(x,columns = [''])
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
@@ -159,10 +160,10 @@ data['color'] = Category20[len(x)]
 # data['color'] = chart_colors[:len(x)]
 
 #print(data)
-s2 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
+s2 = figure(plot_width=pw, plot_height=ph, title="* Segundo Indicador: \tNum_SoU/Num tot Trab {} ".format(fecha), toolbar_location=None,
            tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
-s2.wedge(x=0, y=1, radius=0.4,
-        start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+
+s2.wedge(x=0, y=1, radius=0.4,start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
         line_color="white", fill_color='color', legend_field='unidad', source=data)
 s2.axis.axis_label=None
 s2.axis.visible=False
@@ -215,7 +216,7 @@ fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
 counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
-s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ 10), plot_height=ph, title="OT abiertas y cerradas en {}.".format(fecha),
+s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ 10), plot_height=ph, title="* Tercer Indicador: \tOT abiertas y cerradas en {}.".format(fecha),
            toolbar_location=None, tools="")
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
@@ -302,6 +303,7 @@ for x,y in enumerate(nom_tec):
         tipos['T2'].update({y:resultados[x][y][1]['T2']})
     else:
         tipos['T2'].update({y:0})
+    
         print("\nEn {} no existen OT de tipo T2".format(fecha))
 
 # =============================================================================
@@ -310,7 +312,7 @@ for x,y in enumerate(nom_tec):
 
 factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
 
-s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Cuarto -Quinto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
            toolbar_location=None, tools="")
 x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
 s4.vbar(x=factors, top=x, width=0.4, alpha=0.5)
@@ -399,7 +401,7 @@ while(l<np.shape(tipo)[0]):
 #                                     INDICADOR 6
 # =============================================================================
 factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
-s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
            toolbar_location=None, tools="")
 x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
 s6.vbar(x=factors, top=x, width=0.3, alpha=1)
@@ -415,7 +417,7 @@ print(f"\n\tSexto Indicador listo")
 print(f"\n* Séptimo Indicador")
 
 factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
-s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
                toolbar_location=None, tools="")
 # str(fecha.year) + '-' + contains0(str(fecha.month))
 if np.shape(tabla_T2)[0]!=0:
@@ -491,7 +493,7 @@ data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
 data['color'] = Oranges[len(x)]
 
-s8 = figure(plot_width=pw, plot_height=ph, title="Num_SoU/Num tot Trab {} ".format(str(fecha.year) + '-' + contains0(str(fecha.month))), toolbar_location=None,
+s8 = figure(plot_width=pw, plot_height=ph, title="* Octavo Indicador: \tNum_SoU/Num tot Trab {} ".format(str(fecha.year) + '-' + contains0(str(fecha.month))), toolbar_location=None,
            tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
 s8.wedge(x=0, y=1, radius=0.4,
         start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
@@ -580,7 +582,7 @@ fruits = [str(serie)]
 counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,contador + contador/2), plot_height=ph, title="Reincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + contador/2), plot_height=ph, title="* Noveno Indicador: \tReincidencias por equipo",
            toolbar_location=None, tools="")
 s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
