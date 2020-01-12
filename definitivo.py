@@ -579,7 +579,7 @@ fruits = [str(serie)]
 counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,contador + contador%2), plot_height=ph, title="Reincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + contador/2), plot_height=ph, title="Reincidencias por equipo",
            toolbar_location=None, tools="")
 s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
