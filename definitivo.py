@@ -215,7 +215,7 @@ fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
 counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
-s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ np.max(counts)//10), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
+s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ np.max(counts)//10), plot_height=ph, title="OT abiertas y cerradas en {}.".format(fecha),
            toolbar_location=None, tools="")
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
@@ -413,21 +413,20 @@ print(f"\n\tSexto Indicador listo")
 #                                     INDICADOR 7
 # =============================================================================
 print(f"\n* Séptimo Indicador")
-try:
-    factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
-    s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
-                   toolbar_location=None, tools="")
-    if np.shape(tabla_T2)[0]!=0:
-        x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
-    else:
-        x = [0 for i in range(0,np.shape(tabla_T2)[0])]
-    s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
-    s7.y_range.start = 0
-    s7.x_range.range_padding = 0.05
-    s7.xaxis.major_label_orientation = 1
-    s7.xgrid.grid_line_color = None
-except:
-    print("\n\tNo existen órdenes de Tipo T2 en {}".format(fecha))
+
+factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
+s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
+               toolbar_location=None, tools="")
+# str(fecha.year) + '-' + contains0(str(fecha.month))
+if np.shape(tabla_T2)[0]!=0:
+    x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
+else:
+    x = [0 for i in range(0,np.shape(tabla_T2)[0])]
+s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
+s7.y_range.start = 0
+s7.x_range.range_padding = 0.05
+s7.xaxis.major_label_orientation = 1
+s7.xgrid.grid_line_color = None
     
 print(f"\n\tSéptimo Indicador listo\n")
 
@@ -571,7 +570,7 @@ for i in fechas:
     aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = True)
 
 contador = np.shape(aux)[0]
-print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
+print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
 
 # =============================================================================
 #                                   INDICADOR 9
