@@ -152,7 +152,7 @@ for i in range(num_to_filter):
     else:
         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
 
-x = pd.DataFrame(x,columns = [''])
+# x = pd.DataFrame(x,columns = ['Unidad'])
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
@@ -334,9 +334,30 @@ nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
            'GUIDO VICENCIO','IGNACIO VALDIVIA',
            'PABLO SILVA']
 
-# df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
+df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
 df1 = df[df['Estado UEM'].isin(['TRABAJO TERMINADO'])]
-df4 = pd.concat([df1.iloc[:,4],df1.iloc[:,12],df1.iloc[:,15],df1.iloc[:,32]], axis = 1, sort = False).dropna()
+
+# =============================================================================
+# df1.iloc[:,4] : Equipo
+# df1.iloc[:,12]: Tipo de mantencion
+# df1.iloc[:,15]: Nombre Tecnico
+# df1.iloc[:,20]: Fecha Inicio
+# df1.iloc[:,30]: Fecha Termino
+# df1.iloc[:,30]: Horas Hombre
+# =============================================================================
+
+# =============================================================================
+# # Filtramos datos de Fecha Inicio y Fecha Termino que no corresponden por formato
+# =============================================================================
+dfaux1 = df1.iloc[:,20]
+dfaux1 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(df1['Fecha Inicio'])], columns = ['Fecha Inicio'])
+dfaux1 = dfaux1.dropna()
+
+dfaux2 = pd.DataFrame(df1.iloc[:,30],columns = ['Fecha Termino'])
+dfaux2 = dfaux2.dropna()
+dfaux2 = pd.DataFrame([str(j) for i,j in enumerate(dfaux2['Fecha Termino'])], columns = ['Fecha Termino']).dropna()
+
+df4 = pd.concat([df1.iloc[:,4],df1.iloc[:,12],df1.iloc[:,15],dfaux1, dfaux2,df1.iloc[:,32]], axis = 1, sort = False).dropna()
 
 equipos = ['MONITOR', 'ANESTESIA', 'DESFIBRILADOR', 'VENTILADOR', 'INCUBADORA', 'ELECTROBIST']
 df4['Equipo'] = df4['Equipo'].str.upper()
@@ -348,7 +369,7 @@ df4 =  df4[~df4['Equipo'].isin(["SISTEMA DE MONITOREO MULTIPARAMETRO",
 aux = pd.DataFrame([])
 
 for i in equipos:
-        aux = aux.append(df4[df4['Equipo'].str.contains(i)], ignore_index = True)
+        aux = aux.append(df4[df4['Equipo'].str.contains(i)], ignore_index = False)
 
 #Ante la posibilidad que la búsqueda de elementos coincida por alcance con otros, borramos estas alternativas.
 aux = aux[~aux['Equipo'].isin(['MONITOR DESFIBRILADOR','MONITOR DESFIBRILADOR CON ECG'])]
@@ -365,12 +386,37 @@ tipo = ['T1','T2']
 l = 0
 tiempos =  {'T1':{'MONITOR':4, 'ANESTESIA':5,'DESFIBRILADOR':5, 'VENTILADOR':5,'INCUBADORA':3,'ELECTROBIST':4},'T2':{'MONITOR':5, 'ANESTESIA':6,'DESFIBRILADOR':6, 'VENTILADOR':6,'INCUBADORA':4,'ELECTROBIST':-1}}
 
+# =============================================================================
+# Filtrar por fecha
+# =============================================================================
+f1  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+f2  = datetime.strptime(str(int(año)+1) +"-" + mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+
+dbd = (f2 -f1).days/30
+fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
+# fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
+fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
+
+aux_in = pd.DataFrame([])
+aux_term = pd.DataFrame([])
+aux_date = pd.DataFrame([])
+
+for i in fechas:
+    aux_in = aux_in.append(aux[aux['Fecha Inicio'].str.contains(i)], ignore_index = False)
+    aux_term = aux_term.append(aux_in[aux_in['Fecha Termino'].str.contains(i)], ignore_index = False)
+
+aux_term = aux_term.dropna() 
+
+# =============================================================================
+#               Fin del filtro por fecha
+# =============================================================================
+
 while(l<np.shape(tipo)[0]):
     globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
     globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
     
     for i in nom_tec:
-        globals()['ord_{}'.format(i)] = aux[aux['Nombre Técnico']==i]
+        globals()['ord_{}'.format(i)] = aux_term[aux_term['Nombre Técnico']==i]
         globals()['ord_{}'.format(i)] = globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Tipo de mantención']==tipo[l]]
     
         for j in equipo:
@@ -569,7 +615,7 @@ aux = pd.DataFrame([])
 
 for i in fechas:
     # print(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)])
-    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = True)
+    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = False)
 
 contador = np.shape(aux)[0]
 print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
@@ -579,7 +625,7 @@ print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(
 # =============================================================================
 
 fruits = [str(serie)]
-counts = [contador]
+counts = [contador] 
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
 s9 = figure(x_range=fruits, y_range=(0,contador + contador/2), plot_height=ph, title="* Noveno Indicador: \tReincidencias por equipo",
