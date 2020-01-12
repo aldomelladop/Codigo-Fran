@@ -215,7 +215,7 @@ fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
 counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
-s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ np.max(counts)%2), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
+s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ np.max(counts)//10), plot_height=ph, title="OT abiertas y cerradas en".format(fecha),
            toolbar_location=None, tools="")
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
@@ -575,22 +575,11 @@ print(f"La cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1
 #                                   INDICADOR 9
 # =============================================================================
 
-# factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
-
-# s9 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerlegendradas v/s total mes\n{}".format(str(fecha.year) + '-' + contains0(str(fecha.month))),
-#            toolbar_location=None, tools="")
-# x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
-# s9.vbar(x=factors, top=x, width=0.4, alpha=0.5)
-# s9.y_range.start = 0
-# s9.x_range.range_padding = 0.05
-# s9.xaxis.major_label_orientation = 1
-# s9.xgrid.grid_line_color = None
-
 fruits = [str(serie)]
 counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,contador + contador%10), plot_height=ph, title="Reincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + contador//2), plot_height=ph, title="Reincidencias por equipo",
            toolbar_location=None, tools="")
 s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
