@@ -148,10 +148,10 @@ x  = {}
 for i in range(num_to_filter):
     if ocurr.iloc[i,1] !=0:
         aux =  {'{}'.format(ocurr.iloc[i,0]): round((ocurr.iloc[i,1]/num_trab)*100,2)}    
-    else: 
+    else:
         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
     
-    x.update(aux) 
+    x.update(aux)
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
