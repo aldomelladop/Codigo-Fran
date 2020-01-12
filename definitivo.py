@@ -398,7 +398,7 @@ while(l<np.shape(tipo)[0]):
 # =============================================================================
 #                                     INDICADOR 6
 # =============================================================================
-factors = [(tabla_T1.iloc[i,2],tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
+factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
 s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="% de OT cerradas v/s total mes\n{}".format(fecha),
            toolbar_location=None, tools="")
 x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
