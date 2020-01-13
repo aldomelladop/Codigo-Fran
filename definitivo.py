@@ -150,6 +150,8 @@ for i in range(num_to_filter):
         aux =  {'{}'.format(ocurr.iloc[i,0]): round((ocurr.iloc[i,1]/num_trab)*100,2)}    
         x.update(aux)
     else:
+        aux = {'{}'.format(ocurr.iloc[i,0]):0}
+        x.update(aux)
         print(f"\nEn esta fecha para {ocurr.iloc[i,0]} no existen OT")
 
 # x = pd.DataFrame(x,columns = ['Unidad'])
@@ -355,7 +357,7 @@ dfaux1 = dfaux1.dropna()
 
 dfaux2 = pd.DataFrame(df1.iloc[:,30],columns = ['Fecha Termino'])
 dfaux2 = dfaux2.dropna()
-dfaux2 = pd.DataFrame([str(j) for i,j in enumerate(dfaux2['Fecha Termino'])], columns = ['Fecha Termino']).dropna()
+dfaux2 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(dfaux2['Fecha Termino'])], columns = ['Fecha Termino']).dropna()
 
 df4 = pd.concat([df1.iloc[:,4],df1.iloc[:,12],df1.iloc[:,15],dfaux1, dfaux2,df1.iloc[:,32]], axis = 1, sort = False).dropna()
 
@@ -389,21 +391,23 @@ tiempos =  {'T1':{'MONITOR':4, 'ANESTESIA':5,'DESFIBRILADOR':5, 'VENTILADOR':5,'
 # =============================================================================
 # Filtrar por fecha
 # =============================================================================
-f1  = datetime.strptime(año +"-" +mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-f2  = datetime.strptime(str(int(año)+1) +"-" + mes + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+f1  = str(año) +"-"
+f2  = str(int(año)+1) +"-"
+fechas = [f1,f2]
 
-dbd = (f2 -f1).days/30
-fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
+# dbd = (f2 -f1).days/30
+# fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
 # fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
-fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
 
 aux_in = pd.DataFrame([])
 aux_term = pd.DataFrame([])
 aux_date = pd.DataFrame([])
 
 for i in fechas:
-    aux_in = aux_in.append(aux[aux['Fecha Inicio'].str.contains(i)], ignore_index = False)
-    aux_term = aux_term.append(aux_in[aux_in['Fecha Termino'].str.contains(i)], ignore_index = False)
+    aux_in = aux_in.append(aux[aux['Fecha Inicio'].str.contains(f1)], ignore_index = False)
+
+for i in fechas:
+    aux_term = aux_in.append(aux_in[aux_in['Fecha Termino'].str.contains(f2)], ignore_index = False)
 
 aux_term = aux_term.dropna() 
 
