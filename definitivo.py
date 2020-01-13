@@ -417,7 +417,8 @@ aux_term = aux_term.dropna()
 
 while(l<np.shape(tipo)[0]):
     globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
-    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
+    # globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
+    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
     
     for i in nom_tec:
         globals()['ord_{}'.format(i)] = aux_term[aux_term['Nombre Técnico']==i]
@@ -430,6 +431,14 @@ while(l<np.shape(tipo)[0]):
             aux2 = pd.DataFrame([[j,tipo[l],i,round(promedio,1)]],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])    
             globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = globals()['prom_hh_eq_tec_{}'.format(tipo[l])].append(aux2).dropna() #NaN borrados. Usado para calcular apropiadamente el promedio de hh
 
+# =============================================================================
+# Posible error: 
+# las tablas con las órdenes del tipo T1 y T2 son generadas para cada técnico
+# y el promedio de las horas es también calculado, sin embargoi, cuando deberían 
+#  guardarse en la tabla que se grafica, estos no aparecen y aunque hay valores, la tabla
+# aparece vacía y sin elementos, según yo, se puede corregir, revisando la condicion del else de la linea
+# 450.
+# =============================================================================
     for x in equipos:
         for i in nom_tec:
             aux1 = globals()['prom_hh_eq_tec_{}'.format(tipo[l])][globals()['prom_hh_eq_tec_{}'.format(tipo[l])]['Equipo'].str.contains(x)]
@@ -440,7 +449,7 @@ while(l<np.shape(tipo)[0]):
                 globals()['tabla_{}'.format(tipo[l])] = globals()['tabla_{}'.format(tipo[l])].append(aux4).dropna()
             else:
                 pass
-
+            
     for j in equipos:
         for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
             if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
@@ -562,15 +571,15 @@ import os
 
 print(f"\nNoveno Indicador\n")
 
-df1 = pd.DataFrame(df.iloc[:,7])# Serie
-# df1 = pd.DataFrame([np.drop(j) if j in ['SN','S/N','sn','na','nan'] else str(j) for i,j in enumerate(df1['Serie'])], columns = ['Serie'])
-df1 = pd.DataFrame([str(j) for i,j in enumerate(df1['Serie'])], columns = ['Serie'])
-df1 = df1[~df1['Serie'].isin(['SN','S/N','sn','na','nan'])]
+df1 = pd.DataFrame(df.iloc[:,8])# Inventario
+df1 = pd.DataFrame([str(j) for i,j in enumerate(df1['Inventario'])], columns = ['Inventario'])
+df1 = df1[~df1['Inventario'].isin(['SN','S/N','sn','na','nan'])]
 df1 = df1.dropna()
 
 df2 = pd.DataFrame(df.iloc[:,9]) #Fecha recepción
-df2 = pd.DataFrame([str(j) if type(j)!=str and j!='00-00-00000' else np.nan for i,j in enumerate(df2['Fecha recepcion OT'])], columns = ['Fecha recepcion OT'])
-df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
+# df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
+# df2 = pd.DataFrame([str(j) if type(j)!=str and j!='00-00-00000' else np.nan for i,j in enumerate(df2['Fecha recepcion OT'])], columns = ['Fecha recepcion OT'])
+# df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
 df2 = df2.dropna()
 
 df3 = pd.DataFrame(df.iloc[:,11]) #Clasificación
@@ -582,53 +591,44 @@ df4 = df1.join([df2,df3]).dropna()
 flag = True
 
 while flag:
-    serie = input('\nIngrese Equipo (Serie) a buscar: ')
-    print('\nIngrese Fecha Inicio  (f1) de búsqueda: ')
+    inventario = input('\nIngrese Equipo (N°Inventario) a buscar: ')
+    print('\nIngrese Fecha desde la cual buscar: ')
     m1 = input('\tMes: ')
     a1 = input('\tAño: ')
     
-    print('\nIngrese Fecha término (f2) de búsqueda: ')
-    m2 = input('\tMes: ')
-    a2 = input('\tAño: ')
-    
-    if len(a2)==0 or len(a2)==0 or len(m1)==0 or len(m2)==0:
+    if len(a1)==0 or len(m1)==0:
         print("\nFavor corrija los datos ingresados por uno válido\n")
-    elif a2<a1:
-        print(f"\nEl año de término {a2} es menor que el año de inicio {a1}\n")
     else:
-        # print(f"type(m1) = {type(m1)}\ntype(m2) = {type(m2)}")
         m1 = contains0(m1)
-        m2 = contains0(m2)
 
-        f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-        f2  = datetime.strptime(a2 +"-" +m2 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-        
-        flag = False
-        # print(f"\nelse:\nm1 = {m1}, m2 = {m2}")
+    f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+    f2  = datetime.strptime(str(int(a1)+1) +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+
+    flag = False
     
-# Filtrar por serie
-filtro_serie = df4[df4['Serie'].str.contains(serie)]
+# Filtrar por Inventario
+filtro_inventario = df4[df4['Inventario'].str.contains(inventario )]
 # diferencia entre fechas 
 # Representa la cantidad de meses y años que hay de diferencia entre la f1 y la f2
 
 dbd = (f2 -f1).days/30
 fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
-fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
+fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
 
 aux = pd.DataFrame([])
 
 for i in fechas:
     # print(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)])
-    aux = aux.append(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)], ignore_index = False)
+    aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([i])], ignore_index = False)
 
 contador = np.shape(aux)[0]
-print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {serie} es: {contador}")
+print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {inventario} es: {contador}")
 
 # =============================================================================
 #                                   INDICADOR 9
 # =============================================================================
 
-fruits = [str(serie)]
+fruits = [str(inventario)]
 counts = [contador] 
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
