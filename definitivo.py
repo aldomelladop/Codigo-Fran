@@ -417,7 +417,7 @@ aux_term = aux_term.dropna()
 
 while(l<np.shape(tipo)[0]):
     globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
-    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
+    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
     
     for i in nom_tec:
         globals()['ord_{}'.format(i)] = aux_term[aux_term['Nombre Técnico']==i]
