@@ -77,6 +77,7 @@ if num_trab!=0:
         s1 = None        
 else:
     print("División por 0")
+    porcentaje = 0
 
 print(f"\n\tPrimer Indicador listo\n")
 
@@ -598,41 +599,41 @@ while flag:
     
     if len(a1)==0 or len(m1)==0:
         print("\nFavor corrija los datos ingresados por uno válido\n")
+        
     else:
         m1 = contains0(m1)
-
-    f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-    f2  = datetime.strptime(str(int(a1)+1) +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-
-    flag = False
+        f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+        # f2  = datetime.strptime(str(int(a1)+1) +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
+        flag = False
     
 # Filtrar por Inventario
-filtro_inventario = df4[df4['Inventario'].str.contains(inventario )]
+filtro_inventario = df4[df4['Inventario'].str.contains(inventario)]
 # diferencia entre fechas 
 # Representa la cantidad de meses y años que hay de diferencia entre la f1 y la f2
 
-dbd = (f2 -f1).days/30
-fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
-fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
+# dbd = (f2 -f1).days/30
+# fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
+# fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
+f = str(f1.year) +'-'
 
 aux = pd.DataFrame([])
 
-for i in fechas:
+# for i in fechas:
     # print(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)])
-    aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([i])], ignore_index = False)
+    # aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([i])], ignore_index = False)
+aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([f])], ignore_index = False)
 
 contador = np.shape(aux)[0]
-print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)}- {str(f2.year) + '-' + str(f2.month)} para el equipo {inventario} es: {contador}")
+print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)} para el equipo {inventario} es: {contador}")
 
 # =============================================================================
 #                                   INDICADOR 9
 # =============================================================================
-
 fruits = [str(inventario)]
-counts = [contador] 
+counts = [contador]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-s9 = figure(x_range=fruits, y_range=(0,contador + contador/2), plot_height=ph, title="* Noveno Indicador: \tReincidencias por equipo",
+s9 = figure(x_range=fruits, y_range=(0,contador + (contador+1)/2), plot_height=ph, title="* Noveno Indicador: \tReincidencias por equipo",
            toolbar_location=None, tools="")
 s9.vbar(x='fruits', top='counts', width=0.4, color='color', legend_field="fruits", source=source)
 s9.xgrid.grid_line_color = None
