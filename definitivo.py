@@ -293,20 +293,18 @@ resultados = [aux[i] for i,j in enumerate(aux.items())]
 
 tipos = {'T1':{},'T2':{}}
 
-if np.shape(mant_T1)[0]!=0:
-    for x,y in enumerate(nom_tec):
-        aux = {y:resultados[x][y][0]['T1']}
-        tipos['T1'].update(aux)
-else:
-    print("\nEn esta fecha no existen OT de tipo T1")
-
+for x,y in enumerate(nom_tec):
+    if np.shape(mant_T1)[0]!=0:    
+        tipos['T1'].update({y:resultados[x][y][0]['T1']})
+    else:
+        tipos['T1'].update({y:0}) ##Importante
+        print("\nEn esta fecha no existen OT de tipo T1")
 
 for x,y in enumerate(nom_tec):
     if np.shape(mant_T2)[0]!=0:
         tipos['T2'].update({y:resultados[x][y][1]['T2']})
     else:
         tipos['T2'].update({y:0})
-    
         print("\nEn {} no existen OT de tipo T2".format(fecha))
 
 # =============================================================================
