@@ -677,7 +677,7 @@ grid = gridplot([[s1, None, s2],
                  [s3,None,s4],
                  # [s6,None, s7],
                  [s5,None, s8],
-                 [None,s9, None]], 
+                 [s9,None, None]], 
                     plot_width=pw, plot_height=ph)
 show(grid)
 
