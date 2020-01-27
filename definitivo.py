@@ -12,6 +12,7 @@ from datetime import timedelta
 from datetime import datetime
 import pandas as pd
 import numpy as np
+import os
 # =============================================================================
 #                                      Dashboard
 # =============================================================================
@@ -35,14 +36,18 @@ pw, ph = 500,500
 # =============================================================================
 
 print(f"\n* Primer indicador")
-df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
+df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')    
 df1 = pd.DataFrame(df.iloc[:,1]) #Estado UEM
 
-df2 = pd.DataFrame(df.iloc[:,20]) #Fecha Inicio
-df2 = df2[df2['Fecha Inicio'] !='00-00-0000']
-df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio'])
+df2 = pd.DataFrame(df.iloc[:,9]) #Fecha recepcion OT
+df2 = pd.DataFrame([str(j) for i,j in enumerate(df2['Fecha recepcion OT'])],dtype=object, columns = ['Fecha recepcion OT'])
+df2 = df2[df2['Fecha recepcion OT'] !='00-00-0000']
 
-df3 = df1.join(df2).dropna() #fusiona ambos archivos; Estado UEM y Fecha Inicio, eliminando valores no validos (nan)
+df3 = pd.DataFrame(df.iloc[:,52]) # Fecha Termino6
+df3 = pd.DataFrame([str(j) for i,j in enumerate(df3['Fecha Termino6'])],dtype=object, columns = ['Fecha Termino6']) #Fecha convertida a str para luego buscar fecha
+df3 = df3[df3['Fecha Termino6'] !='00-00-0000']
+
+df4 = df1.join(df3.join(df2)).dropna() #fusiona ambos archivos; Estado UEM y Fecha recepcion OT, eliminando valores no validos (nan)
 
 flag = True
 #while usado para que solicite los datos hasta que estos sean válidos
@@ -56,22 +61,21 @@ while flag:
         
 fecha  = año +"-" + contains0(mes) #contains0 corrige la posibiliadd que el usuario ingrese 1, en lugar de 01
 
-df_total_mes  = df3[df3['Fecha Inicio'].str.contains(fecha)]
-num_trab = np.shape(df_total_mes)[0]
+#Total de OT que se generaron en esa fecha
+df_total_mes  = df4[df4['Fecha recepcion OT'].str.contains(fecha)]
+num_total_trab = np.shape(df_total_mes)[0]
 
-# Se buscan el índice de los elementos en la columna 'Estado UEM' que satisfacen la condicion de decir 'TRABAJO TERMINADO'
-indexNames = df_total_mes[ df_total_mes['Estado UEM'] == 'TRABAJO TERMINADO'].index
-
-# eliminar valores en índices que cumplieron la condicion en línea 28
-df_total_mes.drop(indexNames , inplace=True)
-
+aux = df_total_mes[df_total_mes['Fecha Termino6'].str.contains(fecha)]
+num_trab_cl = np.shape(aux)[0]
+ 
 # contar la cantidad de filas que tienen por estado 'Pendiente'
-num_pendientes = np.shape(df_total_mes)[0]
+num_pendientes  = np.shape(df_total_mes)[0] - num_trab_cl
 
-if num_trab!=0:
+if num_total_trab!=0:
     #calculo porcentaje
+    
     try:
-        porcentaje = round((num_trab - num_pendientes)/num_trab * 100,1)
+        porcentaje = round(num_trab_cl/num_total_trab * 100,1)
     except:
         print("División por 0")
         s1 = None        
