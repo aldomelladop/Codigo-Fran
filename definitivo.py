@@ -460,40 +460,42 @@ while(l<np.shape(tipo)[0]):
     l+=1
 
 # =============================================================================
-#                                     INDICADOR 6
+# # =============================================================================
+# #                                     INDICADOR 6
+# # =============================================================================
+# factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
+# s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+#            toolbar_location=None, tools="")
+# x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
+# s6.vbar(x=factors, top=x, width=0.3, alpha=1)
+# s6.y_range.start = 0
+# s6.x_range.range_padding = 0.2
+# s6.xaxis.major_label_orientation = 1
+# s6.xgrid.grid_line_color = None
+# print(f"\n\tSexto Indicador listo")
+# 
+# # =============================================================================
+# #                                     INDICADOR 7
+# # =============================================================================
+# print(f"\n* Séptimo Indicador")
+# 
+# factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
+# s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+#                toolbar_location=None, tools="")
+# # str(fecha.year) + '-' + contains0(str(fecha.month))
+# if np.shape(tabla_T2)[0]!=0:
+#     x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
+# else:
+#     x = [0 for i in range(0,np.shape(tabla_T2)[0])]
+# s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
+# s7.y_range.start = 0
+# s7.x_range.range_padding = 0.05
+# s7.xaxis.major_label_orientation = 1
+# s7.xgrid.grid_line_color = None
+#     
+# print(f"\n\tSéptimo Indicador listo\n")
+# 
 # =============================================================================
-factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
-s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
-           toolbar_location=None, tools="")
-x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
-s6.vbar(x=factors, top=x, width=0.3, alpha=1)
-s6.y_range.start = 0
-s6.x_range.range_padding = 0.2
-s6.xaxis.major_label_orientation = 1
-s6.xgrid.grid_line_color = None
-print(f"\n\tSexto Indicador listo")
-
-# =============================================================================
-#                                     INDICADOR 7
-# =============================================================================
-print(f"\n* Séptimo Indicador")
-
-factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
-s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
-               toolbar_location=None, tools="")
-# str(fecha.year) + '-' + contains0(str(fecha.month))
-if np.shape(tabla_T2)[0]!=0:
-    x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
-else:
-    x = [0 for i in range(0,np.shape(tabla_T2)[0])]
-s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
-s7.y_range.start = 0
-s7.x_range.range_padding = 0.05
-s7.xaxis.major_label_orientation = 1
-s7.xgrid.grid_line_color = None
-    
-print(f"\n\tSéptimo Indicador listo\n")
-
 # =============================================================================
 #                               Octavo Indicador
 # =============================================================================
@@ -570,7 +572,6 @@ print(f"\n\tOctavo Indicador listo")
 #                                   Noveno Indicador
 # =============================================================================
 # Si en input pongo "SN" debe decirme cuantas veces aparece SN entre la fecha que indique
-import os 
 
 print(f"\nNoveno Indicador\n")
 
@@ -580,9 +581,6 @@ df1 = df1[~df1['Inventario'].isin(['SN','S/N','sn','na','nan'])]
 df1 = df1.dropna()
 
 df2 = pd.DataFrame(df.iloc[:,9]) #Fecha recepción
-# df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
-# df2 = pd.DataFrame([str(j) if type(j)!=str and j!='00-00-00000' else np.nan for i,j in enumerate(df2['Fecha recepcion OT'])], columns = ['Fecha recepcion OT'])
-# df2 = df2[~df2['Fecha recepcion OT'].isin(['00-00-00000'])]
 df2 = df2.dropna()
 
 df3 = pd.DataFrame(df.iloc[:,11]) #Clasificación
@@ -605,27 +603,18 @@ while flag:
     else:
         m1 = contains0(m1)
         f1  = datetime.strptime(a1 +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
-        # f2  = datetime.strptime(str(int(a1)+1) +"-" +m1 + '-28 08:15:27.243860', '%Y-%m-%d %H:%M:%S.%f')
         flag = False
     
 # Filtrar por Inventario
-filtro_inventario = df4[df4['Inventario'].str.contains(inventario)]
-# diferencia entre fechas 
-# Representa la cantidad de meses y años que hay de diferencia entre la f1 y la f2
+data = [[df4.iloc[i,0], str(df4.iloc[i,1]), df4.iloc[i,2]] for i in range(np.shape(df4)[0]) if len(df4.iloc[i,0])==len(inventario) and df4.iloc[i,0]==inventario]
+filtro_inventario = pd.DataFrame(data, columns=['Inventario', 'Fecha recepcion OT','Clasificacion'])
 
-# dbd = (f2 -f1).days/30
-# fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
-# fechas = [str(j.year) +'-' for i,j in enumerate(fechas)]
+
 f = str(f1.year) +'-'
+filtro_inventario.iloc[:,1]= filtro_inventario.iloc[:,1].apply(str)
+filtro_inventario_fecha = filtro_inventario[filtro_inventario['Fecha recepcion OT'].str.contains(f)]
 
-aux = pd.DataFrame([])
-
-# for i in fechas:
-    # print(filtro_serie[filtro_serie['Fecha recepcion OT'].str.contains(i)])
-    # aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([i])], ignore_index = False)
-aux = aux.append(filtro_inventario[filtro_inventario['Fecha recepcion OT'].isin([f])], ignore_index = False)
-
-contador = np.shape(aux)[0]
+contador = np.shape(filtro_inventario_fecha )[0]
 print(f"\nLa cantidad de ocurrencias entre las fechas {str(f1.year) + '-' + str(f1.month)} para el equipo {inventario} es: {contador}")
 
 # =============================================================================
@@ -649,7 +638,8 @@ print(f"\n\tNoveno Indicador listo")
 
 grid = gridplot([[s1, None, s2], 
                  [s3,None,s4],
-                 [s6,None, s7],
+                 # [s6,None, s7],
+                 [None,None, None],
                  [s8,None, s9]], 
                     plot_width=pw, plot_height=ph)
 show(grid)
