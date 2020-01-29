@@ -224,7 +224,8 @@ counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
 s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ 10), plot_height=ph, title="* Tercer Indicador: \tOT abiertas y cerradas en {}.".format(fecha),
-           toolbar_location=None, tools="")
+           toolbar_location=None, tools="hover", tooltips="@unidad: @counts")
+
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
 s3.legend.orientation = "horizontal"
@@ -359,9 +360,6 @@ s5.annular_wedge(x=0, y=1, inner_radius=0.2, outer_radius=0.4,
 s5.axis.axis_label=None
 s5.axis.visible= False
 s5.grid.grid_line_color = None
-
-
-
 
 print(f"\n\tCuarto Indicador listo")
 print(f"\n* Quinto Indicador")
@@ -630,9 +628,11 @@ flag = True
 
 while flag:
     inventario = input('\nIngrese Equipo (N°Inventario) a buscar: ')
-    print('\nIngrese Fecha desde la cual buscar: ')
-    m1 = input('\tMes: ')
+    print('\nIngrese año desde el cual buscar: ')
+    # m1 = input('\tMes: ')
     a1 = input('\tAño: ')
+
+    m1 = '01'
     
     if len(a1)==0 or len(m1)==0:
         print("\nFavor corrija los datos ingresados por uno válido\n")
@@ -673,12 +673,9 @@ print(f"\n\tNoveno Indicador listo")
 #                       GENERAR DASHBOARD
 # =============================================================================
 
-grid = gridplot([[s1, None, s2], 
-                 [s3,None,s4],
-                 # [s6,None, s7],
-                 [s5,None, s8],
-                 [s9,None, None]], 
-                    plot_width=pw, plot_height=ph)
+grid = gridplot([[s1, s2, s3,s4], 
+                 [s5,None,s8,s9]],
+                plot_width=pw, plot_height=ph)
 show(grid)
 
 # =============================================================================
@@ -686,6 +683,6 @@ show(grid)
 # =============================================================================
 os.popen("git add .")
 os.popen("git commit -m 'Actualizando repositorio'")
-os.popen("git push")
+os.popen("git push")    
 
 os.popen("exit")
