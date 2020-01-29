@@ -191,9 +191,9 @@ nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
 # =============================================================================
 # Agregando, filtrando y casteando datos Fecha Inicio
 # =============================================================================
-df0 = pd.DataFrame(df.iloc[:,20]) # Fecha Inicio
-df0 = pd.DataFrame([str(j) for i,j in enumerate(df0['Fecha Inicio'])],dtype=object, columns = ['Fecha Inicio']) #Fecha convertida a str para luego buscar fecha
-df0 = df0[df0['Fecha Inicio'] !='00-00-0000']
+df0 = pd.DataFrame(df.iloc[:,9]) # Fecha recepción
+df0 = pd.DataFrame([str(j) for i,j in enumerate(df0['Fecha recepcion OT'])],dtype=object, columns = ['Fecha recepcion OT'])
+df0 = df0[df0['Fecha recepcion OT'] !='00-00-0000']
 
 df1 = pd.DataFrame(df.iloc[:,52]) # Fecha Termino6
 df1 = pd.DataFrame([str(j) for i,j in enumerate(df1['Fecha Termino6'])],dtype=object, columns = ['Fecha Termino6']) #Fecha convertida a str para luego buscar fecha
@@ -208,7 +208,7 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 # =============================================================================
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 
-mant_mes_ab  = df4[df4['Fecha Inicio' ].str.contains(fecha)]
+mant_mes_ab  = df4[df4['Fecha recepcion OT' ].str.contains(fecha)]
 
 print(f"\n\t\tLa cantidad de órdenes abiertas en {fecha} es: {np.shape(mant_mes_ab)[0]}")
 
@@ -224,7 +224,7 @@ counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
 s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ 10), plot_height=ph, title="* Tercer Indicador: \tOT abiertas y cerradas en {}.".format(fecha),
-           toolbar_location=None, tools="hover", tooltips="@unidad: @counts")
+           toolbar_location=None, tools="hover", tooltips="@fruits: @counts")
 
 s3.vbar(x='fruits', top='counts', width=0.5, color='color', legend_field="fruits", source=source)
 s3.xgrid.grid_line_color = None
