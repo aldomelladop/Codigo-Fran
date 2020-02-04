@@ -492,9 +492,9 @@ factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(ta
 s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
             toolbar_location=None, tools="")
 x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
-s6.vbar(x=factors, top=x, width=0.3, alpha=1)
+s6.vbar(x=factors, top=x, width=0.4, alpha=1)
 s6.y_range.start = 0
-s6.x_range.range_padding = 0.2
+s6.x_range.range_padding = 0.05
 s6.xaxis.major_label_orientation = 1
 s6.xgrid.grid_line_color = None
 print(f"\n\tSexto Indicador listo")
@@ -664,7 +664,9 @@ print(f"\n\tNoveno Indicador listo")
 # =============================================================================
 
 grid = gridplot([[s1, s2, s3,s4], 
-                 [s5,None,s8,s9]],
+                 [s5,None,s8,s9],
+                 [None,s6,s7,None]],
+                
                 plot_width=pw, plot_height=ph)
 show(grid)
 
