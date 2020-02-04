@@ -25,7 +25,7 @@ from bokeh.palettes import Category20c,Category20
 from bokeh.palettes import Oranges, Spectral6
 from bokeh.transform import cumsum
 from bokeh.models import ColumnDataSource, FactorRange
-
+import math
 output_file("dashboard.html")
 
 pw, ph = 500,500
@@ -502,7 +502,7 @@ x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
 s6.vbar(x=factors, top=x, width=0.4, alpha=1)
 s6.y_range.start = 0
 s6.x_range.range_padding = 0.05
-s7.xaxis.major_label_orientation = math.pi/2
+s7.xaxis.group_label_orientation = math.pi/2
 s6.xgrid.grid_line_color = None
 print(f"\n\tSexto Indicador listo")
 
@@ -522,6 +522,7 @@ else:
 s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
 s7.y_range.start = 0
 s7.xaxis.major_label_orientation = math.pi/2
+s7.xaxis.subgroup_label_orientation = math.pi/2
 s7.x_range.range_padding = 0.05
 s7.xaxis.major_label_orientation = 1
 s7.xgrid.grid_line_color = None
