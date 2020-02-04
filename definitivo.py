@@ -354,171 +354,171 @@ s5.grid.grid_line_color = None
 print(f"\n\tCuarto Indicador listo")
 print(f"\n* Quinto Indicador")
 print(f"\n\tQuinto Indicador listo")
+
 # =============================================================================
-# # =============================================================================
-# #                           Sexto-Séptimo Indicador
-# # =============================================================================
-# 
-# print(f"\n* Sexto Indicador")
-# 
-# nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
-#            'GUIDO VICENCIO','IGNACIO VALDIVIA',
-#            'PABLO SILVA']
-# 
-# df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
-# df1 = df[df['Estado UEM'].isin(['TRABAJO TERMINADO'])]
-# 
-# # =============================================================================
-# # df1.iloc[:,4] : Equipo
-# # df1.iloc[:,12]: Tipo de mantencion
-# # df1.iloc[:,15]: Nombre Tecnico
-# # df1.iloc[:,20]: Fecha Inicio
-# # df1.iloc[:,30]: Fecha Termino
-# # df1.iloc[:,30]: Horas Hombre
-# # =============================================================================
-# 
-# # =============================================================================
-# # # Filtramos datos de Fecha Inicio y Fecha Termino que no corresponden por formato
-# # =============================================================================
-# dfaux1 = df1.iloc[:,20]
-# dfaux1 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(df1['Fecha Inicio'])], columns = ['Fecha Inicio'])
-# dfaux1 = dfaux1.dropna()
-# 
-# dfaux2 = pd.DataFrame(df1.iloc[:,30],columns = ['Fecha Termino'])
-# dfaux2 = dfaux2.dropna()
-# dfaux2 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(dfaux2['Fecha Termino'])], columns = ['Fecha Termino']).dropna()
-# 
-# df4 = pd.concat([df1.iloc[:,4],df1.iloc[:,12],df1.iloc[:,15],dfaux1, dfaux2,df1.iloc[:,32]], axis = 1, sort = False).dropna()
-# 
-# equipos = ['MONITOR', 'ANESTESIA', 'DESFIBRILADOR', 'VENTILADOR', 'INCUBADORA', 'ELECTROBIST']
-# df4['Equipo'] = df4['Equipo'].str.upper()
-# 
-# #Filtrar, del listado de equipos, aquellos que no pertenecen al listado de interés
-# df4 =  df4[~df4['Equipo'].isin(["SISTEMA DE MONITOREO MULTIPARAMETRO", 
-#            "AGITADOR DE PLAQUETAS (INCUBADORA Y AGITADOR)"])]
-# 
-# aux = pd.DataFrame([])
-# 
-# for i in equipos:
-#         aux = aux.append(df4[df4['Equipo'].str.contains(i)], ignore_index = False)
-# 
-# #Ante la posibilidad que la búsqueda de elementos coincida por alcance con otros, borramos estas alternativas.
-# aux = aux[~aux['Equipo'].isin(['MONITOR DESFIBRILADOR','MONITOR DESFIBRILADOR CON ECG'])]
-# 
-# #Filtramos técnicos que no figuran en la nómina de interés
-# aux = aux[aux['Nombre Técnico'].isin(nom_tec)]
-# 
-# #Filtramos las órdenes que no son del tipo de interés
-# aux = aux[aux['Tipo de mantención'].isin(['T1','T2'])]
-# 
-# equipo =  list(aux['Equipo'].unique())
-# 
-# tipo = ['T1','T2']
-# l = 0
-# tiempos =  {'T1':{'MONITOR':4, 'ANESTESIA':5,'DESFIBRILADOR':5, 'VENTILADOR':5,'INCUBADORA':3,'ELECTROBIST':4},'T2':{'MONITOR':5, 'ANESTESIA':6,'DESFIBRILADOR':6, 'VENTILADOR':6,'INCUBADORA':4,'ELECTROBIST':-1}}
-# 
-# # =============================================================================
-# # Filtrar por fecha
-# # =============================================================================
-# f1  = str(año) +"-"
-# f2  = str(int(año)+1) +"-"
-# fechas = [f1,f2]
-# 
-# # dbd = (f2 -f1).days/30
-# # fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
-# # fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
-# 
-# aux_in = pd.DataFrame([])
-# aux_term = pd.DataFrame([])
-# aux_date = pd.DataFrame([])
-# 
-# for i in fechas:
-#     aux_in = aux_in.append(aux[aux['Fecha Inicio'].str.contains(f1)], ignore_index = False)
-# 
-# for i in fechas:
-#     aux_term = aux_in.append(aux_in[aux_in['Fecha Termino'].str.contains(f2)], ignore_index = False)
-# 
-# aux_term = aux_term.dropna() 
-# 
-# # =============================================================================
-# #               Fin del filtro por fecha
-# # =============================================================================
-# 
-# while(l<np.shape(tipo)[0]):
-#     globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
-#     # globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
-#     globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
-#     
-#     for i in nom_tec:
-#         globals()['ord_{}'.format(i)] = aux_term[aux_term['Nombre Técnico']==i]
-#         globals()['ord_{}'.format(i)] = globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Tipo de mantención']==tipo[l]]
-#     
-#         for j in equipo:
-#             aux1=  globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Equipo']==j]
-#             promedio = aux1['Horas Hombres'].mean()
-# 
-#             aux2 = pd.DataFrame([[j,tipo[l],i,round(promedio,1)]],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])    
-#             globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = globals()['prom_hh_eq_tec_{}'.format(tipo[l])].append(aux2).dropna() #NaN borrados. Usado para calcular apropiadamente el promedio de hh
-# 
-# # =============================================================================
-# # Posible error: 
-# # las tablas con las órdenes del tipo T1 y T2 son generadas para cada técnico
-# # y el promedio de las horas es también calculado, sin embargoi, cuando deberían 
-# #  guardarse en la tabla que se grafica, estos no aparecen y aunque hay valores, la tabla
-# # aparece vacía y sin elementos, según yo, se puede corregir, revisando la condicion del else de la linea
-# # 450.
-# # =============================================================================
-#     for x in equipos:
-#         for i in nom_tec:
-#             aux1 = globals()['prom_hh_eq_tec_{}'.format(tipo[l])][globals()['prom_hh_eq_tec_{}'.format(tipo[l])]['Equipo'].str.contains(x)]
-#             aux1 = aux1[aux1['Nombre Técnico']==i]
-#             
-#             if np.shape(aux1)[0]!=0:                
-#                 aux4 = pd.DataFrame(np.array([[x,tipo[l], i, round(aux1['Horas Hombres'].mean(),2)]]),columns =['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres Prom'])
-#                 globals()['tabla_{}'.format(tipo[l])] = globals()['tabla_{}'.format(tipo[l])].append(aux4).dropna()
-#             else:
-#                 pass
-#             
-#     for j in equipos:
-#         for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
-#             if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
-#                 globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)
-#     l+=1
-# 
-# # =============================================================================
-# #                                     INDICADOR 6
-# # =============================================================================
-# factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
-# s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
-#            toolbar_location=None, tools="")
-# x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
-# s6.vbar(x=factors, top=x, width=0.3, alpha=1)
-# s6.y_range.start = 0
-# s6.x_range.range_padding = 0.2
-# s6.xaxis.major_label_orientation = 1
-# s6.xgrid.grid_line_color = None
-# print(f"\n\tSexto Indicador listo")
-# 
-# # =============================================================================
-# #                                     INDICADOR 7
-# # =============================================================================
-# print(f"\n* Séptimo Indicador")
-# 
-# factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
-# s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
-#                toolbar_location=None, tools="")
-# # str(fecha.year) + '-' + contains0(str(fecha.month))
-# if np.shape(tabla_T2)[0]!=0:
-#     x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
-# else:
-#     x = [0 for i in range(0,np.shape(tabla_T2)[0])]
-# s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
-# s7.y_range.start = 0
-# s7.x_range.range_padding = 0.05
-# s7.xaxis.major_label_orientation = 1
-# s7.xgrid.grid_line_color = None
-#     
-# print(f"\n\tSéptimo Indicador listo\n")
+#                           Sexto-Séptimo Indicador
+# =============================================================================
+
+print(f"\n* Sexto Indicador")
+
+nom_tec = ['CARLOS LOBOS','FELIPE ACOSTA',
+            'GUIDO VICENCIO','IGNACIO VALDIVIA',
+            'PABLO SILVA']
+
+df = pd.read_excel('PLANILLA GESTION UEM 2018 OFICIAL.xlsx')
+df1 = df[df['Estado UEM'].isin(['TRABAJO TERMINADO'])]
+
+# =============================================================================
+# df1.iloc[:,4] : Equipo
+# df1.iloc[:,12]: Tipo de mantencion
+# df1.iloc[:,15]: Nombre Tecnico
+# df1.iloc[:,20]: Fecha Inicio
+# df1.iloc[:,30]: Fecha Termino
+# df1.iloc[:,30]: Horas Hombre
+# =============================================================================
+
+# =============================================================================
+# # Filtramos datos de Fecha Inicio y Fecha Termino que no corresponden por formato
+# =============================================================================
+dfaux1 = df1.iloc[:,20]
+dfaux1 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(df1['Fecha Inicio'])], columns = ['Fecha Inicio'])
+dfaux1 = dfaux1.dropna()
+
+dfaux2 = pd.DataFrame(df1.iloc[:,30],columns = ['Fecha Termino'])
+dfaux2 = dfaux2.dropna()
+dfaux2 = pd.DataFrame([str(j) if type(j)==datetime and j!=['00-00-0000'] else np.nan for i,j in enumerate(dfaux2['Fecha Termino'])], columns = ['Fecha Termino']).dropna()
+
+df4 = pd.concat([df1.iloc[:,4],df1.iloc[:,12],df1.iloc[:,15],dfaux1, dfaux2,df1.iloc[:,32]], axis = 1, sort = False).dropna()
+
+equipos = ['MONITOR', 'ANESTESIA', 'DESFIBRILADOR', 'VENTILADOR', 'INCUBADORA', 'ELECTROBIST']
+df4['Equipo'] = df4['Equipo'].str.upper()
+
+#Filtrar, del listado de equipos, aquellos que no pertenecen al listado de interés
+df4 =  df4[~df4['Equipo'].isin(["SISTEMA DE MONITOREO MULTIPARAMETRO", 
+            "AGITADOR DE PLAQUETAS (INCUBADORA Y AGITADOR)"])]
+
+aux = pd.DataFrame([])
+
+for i in equipos:
+        aux = aux.append(df4[df4['Equipo'].str.contains(i)], ignore_index = False)
+
+#Ante la posibilidad que la búsqueda de elementos coincida por alcance con otros, borramos estas alternativas.
+aux = aux[~aux['Equipo'].isin(['MONITOR DESFIBRILADOR','MONITOR DESFIBRILADOR CON ECG'])]
+
+#Filtramos técnicos que no figuran en la nómina de interés
+aux = aux[aux['Nombre Técnico'].isin(nom_tec)]
+
+#Filtramos las órdenes que no son del tipo de interés
+aux = aux[aux['Tipo de mantención'].isin(['T1','T2'])]
+
+equipo =  list(aux['Equipo'].unique())
+
+tipo = ['T1','T2']
+l = 0
+tiempos =  {'T1':{'MONITOR':4, 'ANESTESIA':5,'DESFIBRILADOR':5, 'VENTILADOR':5,'INCUBADORA':3,'ELECTROBIST':4},'T2':{'MONITOR':5, 'ANESTESIA':6,'DESFIBRILADOR':6, 'VENTILADOR':6,'INCUBADORA':4,'ELECTROBIST':-1}}
+
+# =============================================================================
+# Filtrar por fecha
+# =============================================================================
+f1  = str(año) +"-"
+f2  = str(int(año)+1) +"-"
+fechas = [f1,f2]
+
+# dbd = (f2 -f1).days/30
+# fechas = [f2 - timedelta(365*i/12) for i in range(0,int(dbd)+1)]
+# fechas = [str(j.year) +'-'+ str(contains0(str(j.month))) for i,j in enumerate(fechas)]
+
+aux_in = pd.DataFrame([])
+aux_term = pd.DataFrame([])
+aux_date = pd.DataFrame([])
+
+for i in fechas:
+    aux_in = aux_in.append(aux[aux['Fecha Inicio'].str.contains(f1)], ignore_index = False)
+
+for i in fechas:
+    aux_term = aux_in.append(aux_in[aux_in['Fecha Termino'].str.contains(f2)], ignore_index = False)
+
+aux_term = aux_term.dropna() 
+
+# =============================================================================
+#               Fin del filtro por fecha
+# =============================================================================
+
+while(l<np.shape(tipo)[0]):
+    globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = pd.DataFrame(columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
+    # globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])
+    globals()['tabla_{}'.format(tipo[l])] = pd.DataFrame([])
+    
+    for i in nom_tec:
+        globals()['ord_{}'.format(i)] = aux_term[aux_term['Nombre Técnico']==i]
+        globals()['ord_{}'.format(i)] = globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Tipo de mantención']==tipo[l]]
+    
+        for j in equipo:
+            aux1=  globals()['ord_{}'.format(i)][globals()['ord_{}'.format(i)]['Equipo']==j]
+            promedio = aux1['Horas Hombres'].mean()
+
+            aux2 = pd.DataFrame([[j,tipo[l],i,round(promedio,1)]],columns=['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres'])    
+            globals()['prom_hh_eq_tec_{}'.format(tipo[l])] = globals()['prom_hh_eq_tec_{}'.format(tipo[l])].append(aux2).dropna() #NaN borrados. Usado para calcular apropiadamente el promedio de hh
+
+# =============================================================================
+# Posible error: 
+# las tablas con las órdenes del tipo T1 y T2 son generadas para cada técnico
+# y el promedio de las horas es también calculado, sin embargoi, cuando deberían 
+#  guardarse en la tabla que se grafica, estos no aparecen y aunque hay valores, la tabla
+# aparece vacía y sin elementos, según yo, se puede corregir, revisando la condicion del else de la linea
+# 450.
+# =============================================================================
+    for x in equipos:
+        for i in nom_tec:
+            aux1 = globals()['prom_hh_eq_tec_{}'.format(tipo[l])][globals()['prom_hh_eq_tec_{}'.format(tipo[l])]['Equipo'].str.contains(x)]
+            aux1 = aux1[aux1['Nombre Técnico']==i]
+            
+            if np.shape(aux1)[0]!=0:                
+                aux4 = pd.DataFrame(np.array([[x,tipo[l], i, round(aux1['Horas Hombres'].mean(),2)]]),columns =['Equipo','Tipo de mantención','Nombre Técnico','Horas Hombres Prom'])
+                globals()['tabla_{}'.format(tipo[l])] = globals()['tabla_{}'.format(tipo[l])].append(aux4).dropna()
+            else:
+                pass
+            
+    for j in equipos:
+        for i in range(np.shape(globals()['tabla_{}'.format(tipo[l])])[0]):
+            if globals()['tabla_{}'.format(tipo[l])].iloc[i,0] == j:
+                globals()['tabla_{}'.format(tipo[l])].iloc[i,3] = round(float(globals()['tabla_{}'.format(tipo[l])].iloc[i,3])/tiempos[tipo[l]][str(j)],1)
+    l+=1
+
+# =============================================================================
+#                                     INDICADOR 6
+# =============================================================================
+factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
+s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+            toolbar_location=None, tools="")
+x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
+s6.vbar(x=factors, top=x, width=0.3, alpha=1)
+s6.y_range.start = 0
+s6.x_range.range_padding = 0.2
+s6.xaxis.major_label_orientation = 1
+s6.xgrid.grid_line_color = None
+print(f"\n\tSexto Indicador listo")
+
+# =============================================================================
+#                                     INDICADOR 7
+# =============================================================================
+print(f"\n* Séptimo Indicador")
+
+factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
+s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+                toolbar_location=None, tools="")
+# str(fecha.year) + '-' + contains0(str(fecha.month))
+if np.shape(tabla_T2)[0]!=0:
+    x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
+else:
+    x = [0 for i in range(0,np.shape(tabla_T2)[0])]
+s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
+s7.y_range.start = 0
+s7.x_range.range_padding = 0.05
+s7.xaxis.major_label_orientation = 1
+s7.xgrid.grid_line_color = None
+    
+print(f"\n\tSéptimo Indicador listo\n")
 # 
 # =============================================================================
 # =============================================================================
