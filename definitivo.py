@@ -523,7 +523,7 @@ else:
 s7.vbar(x=factors, top=x, width=0.4, alpha = 1)
 s7.y_range.start = 0
 s7.xaxis.major_label_orientation = math.pi/2
-s7.xaxis.subgroup_label_orientation = 1
+s7.xaxis.subgroup_label_orientation = math.pi/4
 s7.x_range.range_padding = 0.05
 s7.xgrid.grid_line_color = None
     
