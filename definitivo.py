@@ -522,7 +522,7 @@ if np.shape(tabla_T2)[0]!=0:
     x = [tabla_T2.iloc[i,3] for i in range(0,np.shape(tabla_T2)[0])]
 else:
     x = [0 for i in range(0,np.shape(tabla_T2)[0])]
-s7.vbar(x=factors, top=x, width=0.4, alpha = 0.5)
+s7.vbar(x=factors, top=x, width=0.4, alpha = 2)
 s7.y_range.start = 0
 #Etiquetas del eje X
 s7.xaxis.major_label_orientation = math.pi/4
