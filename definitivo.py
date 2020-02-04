@@ -515,7 +515,7 @@ print(f"\n\tSexto Indicador listo")
 print(f"\n* Séptimo Indicador")
 
 factors = [(tabla_T2.iloc[i,2],tabla_T2.iloc[i,0]) for i in range(0,np.shape(tabla_T2)[0])]    
-s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+s7 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Séptimo Indicador: \t% de OT cerradas v/s total año\n{}".format(año),
                 toolbar_location=None, tools="")
 # str(fecha.year) + '-' + contains0(str(fecha.month))
 if np.shape(tabla_T2)[0]!=0:
