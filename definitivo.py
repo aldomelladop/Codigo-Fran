@@ -496,7 +496,7 @@ while(l<np.shape(tipo)[0]):
 #                                     INDICADOR 6
 # =============================================================================
 factors = [(tabla_T1.iloc[i,2], tabla_T1.iloc[i,0]) for i in range(0,np.shape(tabla_T1)[0])]
-s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
+s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indicador: \t% de OT cerradas v/s total año\n{}".format(año),
             toolbar_location=None, tools="")
 x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
 s6.vbar(x=factors, top=x, width=0.4, alpha=1)
@@ -676,9 +676,9 @@ print(f"\n\tNoveno Indicador listo")
 #                       GENERAR DASHBOARD
 # =============================================================================
 
-grid = gridplot([[s1, s2, s3,s4], 
-                 [s5,None,s8,s9],
-                 [None,s6,s7,None]],
+grid = gridplot([[s1, s2, s3], 
+                 [s4,s5,s6],
+                 [s7,s8,s9]],
                 
                 plot_width=pw, plot_height=ph)
 show(grid)
