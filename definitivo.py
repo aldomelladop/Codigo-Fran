@@ -501,7 +501,7 @@ s6 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Sexto Indica
 x = [tabla_T1.iloc[i,3] for i in range(0,np.shape(tabla_T1)[0])]
 s6.vbar(x=factors, top=x, width=0.4, alpha=1)
 s6.y_range.start = 0
-s6.x_range.range_padding = 0.15
+s6.x_range.range_padding = 0
 #Etiquetas del eje X
 s6.xaxis.major_label_orientation = math.pi/4
 #Etiquetas de más abajo
@@ -528,7 +528,7 @@ s7.y_range.start = 0
 s7.xaxis.major_label_orientation = math.pi/4
 #Etiquetas de más abajo
 s7.xaxis.group_label_orientation = math.pi/4
-s7.x_range.range_padding = 1
+s7.x_range.range_padding = 0
 s7.xgrid.grid_line_color = None
     
 print(f"\n\tSéptimo Indicador listo\n")
