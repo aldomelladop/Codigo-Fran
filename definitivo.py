@@ -576,14 +576,14 @@ else:
 # =============================================================================
 #                              DASHBOARD  INDICADOR 8
 # =============================================================================
-x  = {'Terminada': 100-porcentaje_c, 'Pendiente':porcentaje_c, '':0}
+x  = {'Terminada': round(100-porcentaje_c,2), 'Pendiente':round(porcentaje_c,2), '':0}
 
 data = pd.Series(x).reset_index(name='value').rename(columns={'index':'unidad'})
 data['angle'] = data['value']/data['value'].sum() * 2*pi
 data['color'] = Oranges[len(x)]
 
 s8 = figure(plot_width=pw, plot_height=ph, title="* Octavo Indicador: \tNum_SoU/Num tot Trab {} ".format(str(fecha.year) + '-' + contains0(str(fecha.month))), toolbar_location=None,
-           tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
+           tools="hover", tooltips="@unidad: @value%", x_range=(-0.5, 1.0))
 s8.wedge(x=0, y=1, radius=0.4,
         start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
         line_color="white", fill_color='color', legend_field='unidad', source=data)
