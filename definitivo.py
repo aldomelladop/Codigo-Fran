@@ -317,7 +317,10 @@ for x,y in enumerate(nom_tec):
 #                                 INDICADOR 4 y 5         
 # =============================================================================
 suma = sum([tipos['T1'][i] for i in tipos['T1'].keys()])
-x_T1  = dict({(i, round((tipos['T1'][i]/suma),2)*100) for i in tipos['T1'].keys()})
+if suma!=0:
+    x_T1  = dict({(i, round((tipos['T1'][i]/suma),2)*100) for i in tipos['T1'].keys()})
+else:
+    x_T1  = dict({(i, round(tipos['T1'][i],2)*100) for i in tipos['T1'].keys()})
 data = pd.DataFrame.from_dict(dict(x_T1), orient='index').reset_index().rename(index=str, columns={0:'value', 'index':'country'})
 data['angle'] = data['value']/sum(x_T1.values()) * 2*pi
 data['color'] = Category20c[len(x_T1)]
