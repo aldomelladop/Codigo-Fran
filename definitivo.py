@@ -208,13 +208,14 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 # =============================================================================
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 
-mant_mes_ab  = df4[df4['Fecha recepcion OT' ].str.contains(fecha)]
-
-print(f"\n\t\tLa cantidad de órdenes abiertas en {fecha} es: {np.shape(mant_mes_ab)[0]}")
+mant_mes_rc  = df4[df4['Fecha recepcion OT' ].str.contains(fecha)]
+n_mant_mes_rc = np.shape(mant_mes_rc)[0]
 
 mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
+n_mant_mes_cr = np.shape(mant_mes_cr)[0]
 
-print(f"\t\tLa cantidad de órdenes cerradas en {fecha} es: {np.shape(mant_mes_cr)[0]}\n")
+print(f"\n\t\tLa cantidad de órdenes abiertas en {fecha} es: {n_mant_mes_rc - n_mant_mes_cr}")
+print(f"\t\tLa cantidad de órdenes cerradas en {fecha} es: {n_mant_mes_cr}\n")
 
 # =============================================================================
 #                               DASHBOARD INDICADOR 3
