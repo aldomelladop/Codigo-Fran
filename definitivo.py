@@ -338,7 +338,11 @@ s4.grid.grid_line_color = None
 
 # =============================================================================
 suma = sum([tipos['T2'][i] for i in tipos['T2'].keys()])
-x_T2  = dict({(i, round((tipos['T2'][i]/suma),2)*100) for i in tipos['T2'].keys()})
+if suma!=0:
+    x_T2  = dict({(i, round((tipos['T2'][i]/suma),2)*100) for i in tipos['T2'].keys()})
+else:
+    x_T2  = dict({(i, round(tipos['T2'][i],2)*100) for i in tipos['T2'].keys()})
+
 data = pd.DataFrame.from_dict(dict(x_T2), orient='index').reset_index().rename(index=str, columns={0:'value', 'index':'country'})
 data['angle'] = data['value']/sum(x_T2.values()) * 2*pi
 data['color'] = Category20c[len(x_T2)]
@@ -500,6 +504,8 @@ s6.y_range.start = 0
 s6.x_range.range_padding = 0.05
 s6.xaxis.major_label_orientation = 1
 s6.xgrid.grid_line_color = None
+s6.legend.orientation = "horizontal"
+s6.legend.location = "top_center"
 print(f"\n\tSexto Indicador listo")
 
 # =============================================================================
