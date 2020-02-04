@@ -313,27 +313,25 @@ for x,y in enumerate(nom_tec):
         tipos['T2'].update({y:0})
         print("\nEn {} no existen OT de tipo T2".format(fecha))
 
-# =============================================================================
+# ==========================================================================
 #                                 INDICADOR 4 y 5         
-# =============================================================================
+# ==========================================================================
+
 x_T1  = dict({(i, tipos['T1'][i]) for i in tipos['T1'].keys()})
-data = pd.DataFrame.from_dict(dict(x_T1), orient='index').reset_index().rename(index=str, columns={0:'value', 'index':'country'})
-data['angle'] = data['value']/sum(x_T1.values()) * 2*pi
-data['color'] = Category20c[len(x_T1)]
+data = pd.Series(x_T1).reset_index(name='value').rename(columns={'index':'unidad'})
+data['angle'] = data['value']/data['value'].sum() * 2*pi
+data['color'] = Oranges[len(x_T1)]
 
-s4 = figure(plot_height=350, title="* Cuarto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha), toolbar_location=None,
-           tools="hover", tooltips=[("Cerradas", "@country"),("Value", "2*@value")])
-
-s4.annular_wedge(x=0, y=1, inner_radius=0.2, outer_radius=0.4,
-                start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
-                line_color="white", fill_color='color', legend_label='country', source=data)
-
+s4 = figure(plot_width=pw, plot_height=ph, title="* Cuarto Indicador: \t% 	de OT cerradas v/s total mes\n{}".format(fecha), toolbar_location=None,
+           tools="hover", tooltips="@unidad: @value", x_range=(-0.5, 1.0))
+s4.wedge(x=0, y=1, radius=0.4,
+        start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+        line_color="white", fill_color='color', legend_field='unidad', source=data)
 s4.axis.axis_label=None
-s4.axis.visible= False
+s4.axis.visible=False
 s4.grid.grid_line_color = None
+#===========================================================================
 
-
-# =============================================================================
 x_T2  = dict({(i, tipos['T2'][i]) for i in tipos['T2'].keys()})
 data = pd.DataFrame.from_dict(dict(x_T2), orient='index').reset_index().rename(index=str, columns={0:'value', 'index':'country'})
 data['angle'] = data['value']/sum(x_T2.values()) * 2*pi
@@ -353,7 +351,7 @@ s5.grid.grid_line_color = None
 print(f"\n\tCuarto Indicador listo")
 print(f"\n* Quinto Indicador")
 print(f"\n\tQuinto Indicador listo")
-# =============================================================================
+
 # # =============================================================================
 # #                           Sexto-Séptimo Indicador
 # # =============================================================================
