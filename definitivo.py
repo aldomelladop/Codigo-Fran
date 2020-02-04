@@ -528,7 +528,7 @@ s7.y_range.start = 0
 s7.xaxis.major_label_orientation = math.pi/4
 #Etiquetas de más abajo
 s7.xaxis.group_label_orientation = math.pi/4
-s7.x_range.range_padding = 0.1
+s7.x_range.range_padding = 1
 s7.xgrid.grid_line_color = None
     
 print(f"\n\tSéptimo Indicador listo\n")
