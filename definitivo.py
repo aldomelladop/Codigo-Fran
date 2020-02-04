@@ -211,7 +211,7 @@ df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 mant_mes_rc  = df4[df4['Fecha recepcion OT' ].str.contains(fecha)]
 n_mant_mes_rc = np.shape(mant_mes_rc)[0]
 
-mant_mes_cr  = mant_mes_ab[mant_mes_ab['Fecha Termino6' ].str.contains(fecha)]
+mant_mes_cr  = mant_mes_rc[mant_mes_rc['Fecha Termino6' ].str.contains(fecha)]
 n_mant_mes_cr = np.shape(mant_mes_cr)[0]
 
 print(f"\n\t\tLa cantidad de órdenes abiertas en {fecha} es: {n_mant_mes_rc - n_mant_mes_cr}")
@@ -221,7 +221,7 @@ print(f"\t\tLa cantidad de órdenes cerradas en {fecha} es: {n_mant_mes_cr}\n")
 #                               DASHBOARD INDICADOR 3
 # =============================================================================
 fruits = ['N° Órdenes Abiertas', 'N° Órdenes Cerradas']
-counts = [np.shape(mant_mes_ab)[0],np.shape(mant_mes_cr)[0]]
+counts = [np.shape(mant_mes_rc)[0],np.shape(mant_mes_cr)[0]]
 
 source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6[:2]))
 s3 = figure(x_range=fruits, y_range=(0,np.max(counts)+ 10), plot_height=ph, title="* Tercer Indicador: \tOT abiertas y cerradas en {}.".format(fecha),
@@ -316,25 +316,13 @@ for x,y in enumerate(nom_tec):
 # =============================================================================
 #                                 INDICADOR 4 y 5         
 # =============================================================================
-
-# factors = [(i, 'T1') for i in tipos['T1'].keys()] +[(i, 'T2') for i in tipos['T2'].keys()]
-
-# s4 = figure(x_range=FactorRange(*factors), plot_height=ph, title="* Cuarto -Quinto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha),
-#            toolbar_location=None, tools="")
-# x = [tipos['T1'][i]  for i in tipos['T1'].keys()] +[tipos['T2'][i] for i in tipos['T2'].keys()]
-# s4.vbar(x=factors, top=x, width=0.4, alpha=0.5)
-# s4.y_range.start = 0
-# s4.x_range.range_padding = 0.05
-# s4.xaxis.major_label_orientation = 1
-# s4.xgrid.grid_line_color = None
-
 x_T1  = dict({(i, tipos['T1'][i]) for i in tipos['T1'].keys()})
 data = pd.DataFrame.from_dict(dict(x_T1), orient='index').reset_index().rename(index=str, columns={0:'value', 'index':'country'})
 data['angle'] = data['value']/sum(x_T1.values()) * 2*pi
 data['color'] = Category20c[len(x_T1)]
 
 s4 = figure(plot_height=350, title="* Cuarto Indicador: \t% de OT cerradas v/s total mes\n{}".format(fecha), toolbar_location=None,
-           tools="hover", tooltips=[("Cerradas", "@country"),("Value", "@value")])
+           tools="hover", tooltips=[("Cerradas", "@country"),("Value", "@value"*2)])
 
 s4.annular_wedge(x=0, y=1, inner_radius=0.2, outer_radius=0.4,
                 start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
