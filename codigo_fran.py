@@ -275,9 +275,10 @@ df3 = pd.DataFrame(df.iloc[:,12]) # Tipo de mantención
 df4 = pd.concat([df0,df1,df2,df3], axis = 1, sort = False).dropna()
 # =============================================================================
 mant_mes  = df4[df4['Fecha recepcion OT'].str.contains(fecha)]
+mant_cer_mes  = mant_mes[mant_mes['Fecha Termino6'].str.contains(fecha)]
 
-# Órdenes de tipo T1 generadas en la fecha
-
+# =============================================================================
+# T1
 mant_T1 = mant_mes[mant_mes['Tipo de mantención'] == 'T1'] #Realiza filtro según tipo de mantención, en este caso de tipo T1
 mant_cer_T1 = mant_T1 [mant_T1['Tipo de mantención']=='T1']
 
@@ -286,6 +287,10 @@ suma = np.shape(mant_cer_T1)[0]
 
 #Las mantenciones de tipo T1 realizadas por los técnicos en la lista
 mant_T1 = mant_T1[mant_T1['Nombre Técnico'].isin(nom_tec)] #Realiza filtro según nombre técnico. Elimina a quienes no estan en nom_tec
+# =============================================================================
+
+# =============================================================================
+# T2
 
 mant_T2 = mant_mes[mant_mes['Tipo de mantención'] == 'T2'] #Realiza filtro según tipo de mantención, en este caso de tipo T2
 mant_cer_T2 = mant_T2[mant_T2['Fecha Termino6'].str.contains(fecha)]
@@ -295,6 +300,7 @@ suma2 = np.shape(mant_cer_T2)[0]
 
 #Las mantenciones de tipo T2 realizadas por los técnicos en la lista
 mant_T2 = mant_T2[mant_T2['Nombre Técnico'].isin(nom_tec)] #Realiza filtro según nombre técnico. Elimina a quienes no estan en nom_tec
+# =============================================================================
 
 T = ["T1", "T2"]
 aux = {}
